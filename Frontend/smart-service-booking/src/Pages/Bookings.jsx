@@ -68,7 +68,7 @@ const Bookings = () => {
       setBookings(data);
     } catch (error) {
       console.log(error);
-      setError("Failed to load bookings");
+      setError("Failed to load bookings in website");
     } finally {
       setLoading(false);
     }

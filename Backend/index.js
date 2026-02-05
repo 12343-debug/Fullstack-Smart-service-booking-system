@@ -9,6 +9,8 @@ const cors = require("cors");
 const User = require('./models/User');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("./middleWear/authMiddlewear");
+
 
 
 
@@ -128,7 +130,7 @@ app.post("/add-service",async(req,res)=>{
 })
 
 // adding bookings
-app.post("/book", async (req, res) => {
+app.post("/book",authMiddleware, async (req, res) => {
   const booking = await Booking({
     serviceTitle: req.body.serviceTitle,
     userName:req.body.userName,
@@ -141,19 +143,19 @@ app.post("/book", async (req, res) => {
 
 
 // book api(getting bookings)
-app.get("/bookings", async(req,res)=>{
+app.get("/bookings",authMiddleware, async(req,res)=>{
     const data = await Booking.find();
      res.json(data);
 });
 
 // delete bookings api
-app.delete("/bookings/:id", async(req,res)=>{
+app.delete("/bookings/:id",authMiddleware, async(req,res)=>{
   await Booking.findByIdAndDelete(req.params.id,);
   res.send("Bookings Deleted");
 
 });
 
-app.put("/bookings/:id", async (req, res) => {
+app.put("/bookings/:id",authMiddleware, async (req, res) => {
   await Booking.findByIdAndUpdate(
     req.params.id,
     { status: req.body.status }

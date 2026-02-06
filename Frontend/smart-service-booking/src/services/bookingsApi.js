@@ -1,12 +1,14 @@
 import api from "./api";
 
 
-const token = localStorage.getItem("token");
+const getAuthConfig = () => {
+  const token = localStorage.getItem("token");
 
-const config = {
-  headers: {
-    Authorization: token
-  }
+  return {
+    headers: {
+      Authorization: token
+    }
+  };
 };
 
 
@@ -16,25 +18,25 @@ export const createBooking = async (serviceTitle, userName, Phone) => {
     // userName: userName,
     // Phone: Phone,
     { serviceTitle, userName, Phone },
-    config
+    getAuthConfig()
   );
   return response.data;
 };
 
 
 export const getBookings = async () => {
-  const response = await api.get("/bookings",config);
+  const response = await api.get("/bookings",getAuthConfig());
   return response.data;
 };
 export const deleteBooking = async (id) => {
-  const response = await api.delete(`/bookings/${id}`,config);
+  const response = await api.delete(`/bookings/${id}`,getAuthConfig());
   return response.data;
 };
 
 export const updateBookingStatus = async (id, status) => {
   const response = await api.put(`/bookings/${id}`, 
     { status },
-    config
+    getAuthConfig()
   );
   return response.data;
 };
@@ -44,7 +46,7 @@ export const updateBookingStatus = async (id, status) => {
 export const updateBookingDetails = async (id, userName, Phone) => {
   const res = await api.put(`/bookings/edit/${id}`, 
     { userName, Phone },
-    config
+    getAuthConfig()
   );
   return res.data;
 };

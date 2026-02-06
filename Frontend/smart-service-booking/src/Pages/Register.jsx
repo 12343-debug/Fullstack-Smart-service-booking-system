@@ -1,20 +1,30 @@
 import { useState } from "react";
 import { registerUser } from "../services/authApi";
+import { useNavigate } from "react-router-dom";
+
 
 
 const Register = () => {
     const [name,setName] = useState("");
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
+  const navigate = useNavigate();
+
 
   const handleRegister = async () => {
     try {
         await registerUser(name,email,password);
         alert("Registered Successfully");
+        navigate("/login");
     } catch (error) {
         alert("Registration Failed");
     }
   };
+
+  <button onClick={() => navigate("/login")}>
+  Already have account? Login
+</button>
+
 
   return (
     <>

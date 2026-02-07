@@ -9,7 +9,8 @@ const cors = require("cors");
 const User = require('./models/User');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const authMiddleware = require("./middleWear/authMiddlewear");
+const authMiddleware = require("./middleware/authMiddleware");
+
 
 
 
@@ -22,7 +23,7 @@ app.use(express.json());
 const connectDB =require('./db');
 connectDB();
 
-const Service = require('./models/Shema');
+const Service = require('./models/service');
 const Booking = require('./models/Booking');
 
 // authentication
@@ -131,20 +132,25 @@ app.post("/add-service",async(req,res)=>{
 
 // adding bookings
 app.post("/book",authMiddleware, async (req, res) => {
+  try{
   const booking = await Booking({
     serviceTitle: req.body.serviceTitle,
     userName:req.body.userName,
-    Phone:req.body.Phone
+    Phone:req.body.Phone,
+    userId:req.userId
   });
   await booking.save();
   res.send("Booking saved");
+} catch (err){
+  res.status(500).send("booking failed");
+}
 });
 
 
 
 // book api(getting bookings)
 app.get("/bookings",authMiddleware, async(req,res)=>{
-    const data = await Booking.find();
+    const data = await Booking.find({userId: req.userId});
      res.json(data);
 });
 
@@ -189,5 +195,5 @@ app.put("/bookings/edit/:id", async (req, res) => {
 
 
 app.listen(5000, () => {
-  console.log("servier running on port 5000");
+  console.log("server running on port 5000");
 });

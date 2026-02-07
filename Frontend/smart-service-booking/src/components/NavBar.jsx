@@ -1,10 +1,11 @@
-import { AppBar, Button, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Toolbar, Typography,Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -16,7 +17,15 @@ const NavBar = () => {
         <Typography variant="h4" sx={{ flexGrow: 1, mr: 9 }}>
           Smart Service Booking
         </Typography>
-        <Button
+        {!token && (
+          <Box>
+          <Button color="inherit" component={Link} to="/login">Login</Button>
+          <Button color="inherit" component={Link} to="/">Register</Button>
+          </Box>
+        )}
+       {token && (
+        <Box>
+           <Button
           color="inherit"
           sx={{ fontSize: 22, fontWeight: 500 }}
           component={Link}
@@ -51,6 +60,8 @@ const NavBar = () => {
         >
           Logout
         </Button>
+        </Box>
+       )}
       </Toolbar>
     </AppBar>
   );

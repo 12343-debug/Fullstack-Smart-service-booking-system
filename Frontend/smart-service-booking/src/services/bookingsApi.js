@@ -13,11 +13,17 @@ const getAuthConfig = () => {
 
 
 export const createBooking = async (serviceTitle, userName, Phone) => {
+  const token = localStorage.getItem("token");
   const response = await api.post("/book", 
     // serviceTitle: serviceTitle,
     // userName: userName,
     // Phone: Phone,
     { serviceTitle, userName, Phone },
+    {
+    headers:{
+Authorization:token,
+    }
+  },
     getAuthConfig()
   );
   return response.data;

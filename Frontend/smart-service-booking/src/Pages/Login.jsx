@@ -8,18 +8,26 @@ const Login = () => {
   const [password,setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    try{
-      const res = await loginUser(email,password);
-      localStorage.setItem("token",res.token);
-      alert("Login Success");
+ const handleLogin = async () => {
+  try {
+    const res = await loginUser(email, password);
+
+    localStorage.setItem("token", res.token);
+    localStorage.setItem("role", res.role); // 👈 REQUIRED
+
+    alert("Login Successful");
+
+    if (res.role === "admin") {
+      navigate("/admin/dashboard");
+    } else {
       navigate("/services");
-      console.log(email, password);
-      
-    }catch(err){
-      alert(err.response?.data?.message || "Login Failed");
     }
-  };
+
+  } catch (err) {
+    alert("Login failed");
+  }
+};
+
 
   <button onClick={() => navigate("/register")}>
   New user? Register

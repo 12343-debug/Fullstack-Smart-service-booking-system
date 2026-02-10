@@ -7,7 +7,7 @@ const bookingSchema = new mongoose.Schema(
     Phone: String,
 
     userId:{
-      type:mongoose.Schema.types.objectId,
+      type:mongoose.Schema.Types.ObjectId,
       ref:'User',
       required:true   
     },

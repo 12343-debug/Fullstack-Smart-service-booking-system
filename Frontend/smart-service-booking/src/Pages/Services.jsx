@@ -28,24 +28,25 @@ const Services = () => {
 
   const handleBook = async (title) => {
     await createBooking(title, name, phone);
-    alert("Booking Succesfully");
+    alert("Booking Successfully");
     setName("");
     setPhone("");
   };
 
   return (
-    <Container sx={{ mt: 4 }}>
+    <Container sx={{ mt: 4, width: "100%", height: "100%" }}>
       <Typography variant="h4" gutterBottom>
         Available services
       </Typography>
-      <input  
-      
+      <input
+        style={{ padding: "8px", margin: "17px" }}
         placeholder="Your name"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
 
       <input
+        style={{ padding: "8px", margin: "17px" }}
         placeholder="Phone number"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
@@ -53,10 +54,22 @@ const Services = () => {
       <Grid container spacing={3}>
         {services.map((service) => (
           <Grid item xs={12} md={4} key={service._id}>
-            <Card>
+            <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+              <img
+                src={service.image}
+                alt={service.title}
+                style={{
+                  width: "100%",
+                  height: "160px",
+                  objectFit: "contain",
+                  padding: "10px",
+                }}
+              />
+
               <CardContent>
-                <Typography variant="h6">{service.title}</Typography>
-                <Typography color="text.secondary">ID:{service._id}</Typography>
+                <Typography variant="h6" align="center">
+                  {service.icon} {service.title}
+                </Typography>
 
                 <Button
                   variant="contained"
@@ -76,5 +89,3 @@ const Services = () => {
 };
 
 export default Services;
-
-// mongodb+srv://smartServiceBooking:smartBookingApplication@smart-service-booking.lmacasr.mongodb.net/

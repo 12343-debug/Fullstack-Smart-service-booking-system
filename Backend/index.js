@@ -9,10 +9,7 @@ const cors = require("cors");
 const User = require('./models/User');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const authMiddleware = require("./middleware/authMiddleware");
-
-
-
+const authMiddleware = require("./middler/authMiddleware");
 
 
 const app = express();
@@ -23,8 +20,9 @@ app.use(express.json());
 const connectDB =require('./db');
 connectDB();
 
-const Service = require('./models/service');
+const Service = require('./models/Service');
 const Booking = require('./models/Booking');
+
 
 // authentication
 app.post("/register", async(req,res)=>{
@@ -74,6 +72,8 @@ app.post("/login", async (req, res) => {
       return res.status(400).json({ message:"All fields required" });
 
     }
+  
+
 
     // 2. Find user
     const user = await User.findOne({ email });
@@ -95,15 +95,19 @@ app.post("/login", async (req, res) => {
   return res.status(500).json({message:"JWT secret missing"});
 }
 
-const token = jwt.sign(
-  { id: user._id },
+  const token = jwt.sign(
+  {
+    id: user._id,
+    role: user.role   // 👈 THIS WAS MISSING
+  },
   process.env.JWT_SECRET,
-  { expiresIn:"1d" }
+  { expiresIn: "1d" }
 );
 
-
-    res.json({ token})
-  
+res.json({
+  token,
+  role: user.role   // optional but useful
+});
 
   } catch (error) {
     console.log(error);
@@ -122,12 +126,20 @@ app.get("/services", async(req, res) => {
 });
 
 app.post("/add-service",async(req,res)=>{
-    const serviceData = new Service({
-        title:req.body.title,
-    });
+  const {title,icon,image}=req.body;
+  const service =new Service({
+    title,
+    icon,
+    image
+  });
+  await service.save();
+  res.send("services added");
+    // const serviceData = new Service({
+    //     title:req.body.title,
+    // });
 
-    await serviceData.save();
-    res.send("data added");
+    // await serviceData.save();
+    // res.send("data added");
 })
 
 // adding bookings

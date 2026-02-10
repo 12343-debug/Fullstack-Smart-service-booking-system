@@ -6,7 +6,8 @@ import Services from "./Pages/Services.jsx";
 import Bookings from "./Pages/Bookings.jsx";
 import Register from "./Pages/Register.jsx";
 import Login from "./Pages/Login.jsx";
-import ProtectedRoutes from "./components/routes/ProtectedRoutes.jsx";
+
+
 
 function App() {
   return (
@@ -17,24 +18,9 @@ function App() {
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
-        {/* <Route path="/services" element={<Services />} />
-        <Route path="/bookings" element={<Bookings />} /> */}
-        <Route
-          path="/services"
-          element={
-            <ProtectedRoutes>
-              <Services />
-            </ProtectedRoutes>
-          }
-        />
-        <Route
-          path="/bookings"
-          element={
-            <ProtectedRoutes>
-              <Bookings />
-            </ProtectedRoutes>
-          }
-        />
+        <Route path="/services" element={<Services />} />
+        <Route path="/bookings" element={<Bookings />} />
+        
       </Routes>
     </>
   );

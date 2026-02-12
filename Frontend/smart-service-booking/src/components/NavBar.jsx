@@ -1,67 +1,98 @@
-import { AppBar, Button, Toolbar, Typography,Box } from "@mui/material";
+import { AppBar, Button, Toolbar, Typography, Box, IconButton,Menu,MenuItem } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useState } from "react";
 
 const NavBar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
+   // dropdown state
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleProfileClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };  
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
   return (
-    <AppBar position="fixed">
-      <Toolbar>
-        <Typography variant="h4" sx={{ flexGrow: 1, mr: 9 }}>
-          Smart Service Booking
+    <AppBar
+      position="fixed"
+      elevation={2}
+      sx={{ backgroundColor: "#ffffff", color: "#1a1a1a", px: 2 }}
+    >
+      <Toolbar sx={{display:"flex",justifyContent:"space-between"}}>
+        <Typography variant="h5" fontWeight="bold"  sx={{ cursor:"pointer", color:"1976d2"}}
+        onClick={()=>navigate("/services")}
+        >
+          Smart Service 
         </Typography>
         {!token && (
-          <Box>
-          <Button color="inherit" component={Link} to="/login">Login</Button>
-          <Button color="inherit" component={Link} to="/">Register</Button>
+          <Box sx={{display:"flex", gap:2}}>
+            <Button component={Link} to="/login" sx={{textTransform:"none"}}>
+              Login
+            </Button>
+            <Button color="inherit" component={Link} to="/" variant="contained" sx={{textTransform:"none",color:"green"}}>
+              Register
+            </Button>
           </Box>
         )}
-       {token && (
-        <Box>
-           <Button
-          color="inherit"
-          sx={{ fontSize: 22, fontWeight: 500 }}
-          component={Link}
-          to="/"
-        >
-          Home
-        </Button>
-        <Button
-          color="inherit"
-          sx={{ fontSize: 22, fontWeight: 500 }}
-          component={Link}
-          to="/services"
-        >
-          Services
-        </Button>
-        <Button color="inherit" component={Link} to="/bookings">
-          Bookings
-        </Button>
-        <Button
-          onClick={handleLogout}
-          startIcon={<LogoutIcon />}
-          variant="outlined"
-          sx={{
-            borderColor: "red",
-            color: "white",
-            fontWeight: "bold",
-            "&:hover": {
-              backgroundColor: "rgba(255,0,0,0.1)",
-              borderColor: "red",
-            },
-          }}
-        >
-          Logout
-        </Button>
-        </Box>
-       )}
+        {token && (
+          <Box sx={{display:"flex",alignItems:"center",gap:2}}>
+            <Button
+              color="inherit"
+              sx={{ fontWeight: 200 ,fontSize:"22px",fontStyle:"inherit"}}
+              component={Link}
+              to="/"
+            >
+              Home
+            </Button>
+            <Button
+              color="inherit"
+              sx={{ fontSize:"22px", fontWeight: 500 }}
+              component={Link}
+              to="/services"
+             
+            >
+              Services
+            </Button>
+            <Button color="inherit" component={Link} to="/bookings" sx={{fontSize:"22px"}}>
+              Bookings
+            </Button>
+            <IconButton onClick={handleProfileClick}>
+              <AccountCircleIcon fontSize="large"/>
+
+            </IconButton>
+            {/* DROPDOWN MENU */}
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+              <MenuItem onClick={() => { navigate("/bookings"); handleClose(); }}>
+                My Bookings
+              </MenuItem>
+
+              <MenuItem onClick={handleLogout}>
+                <LogoutIcon fontSize="small" sx={{ mr: 1 }} />
+                Logout
+              </MenuItem>
+            </Menu>
+            
+          </Box>
+        )}
       </Toolbar>
     </AppBar>
   );

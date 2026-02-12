@@ -7,20 +7,18 @@ import Bookings from "./Pages/Bookings.jsx";
 import Register from "./Pages/Register.jsx";
 import Login from "./Pages/Login.jsx";
 
-
-
 function App() {
   return (
     <>
       <NavBar />
 
       <Routes>
-        <Route path="/" element={<Register />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/home" element={<Home />} />
+
         <Route path="/services" element={<Services />} />
         <Route path="/bookings" element={<Bookings />} />
-        
       </Routes>
     </>
   );

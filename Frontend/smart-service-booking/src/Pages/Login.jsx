@@ -2,6 +2,7 @@ import { useState } from "react";
 import { loginUser } from "../services/authApi";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
+import AnimatedPage from "../components/AnimatedPage";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +24,7 @@ const Login = () => {
   };
 
   return (
+    <AnimatedPage>
     <Box
       sx={{
         minHeight: "100vh",
@@ -85,6 +87,7 @@ const Login = () => {
         </Paper>
       </Container>
     </Box>
+    </AnimatedPage>
     // <div className="auth-box">
     //   <h2>Login</h2>
 

@@ -23,6 +23,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import toast from "react-hot-toast";
 import { Skeleton } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { IconButton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
+
+
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -43,7 +49,11 @@ const Bookings = () => {
   const [error, setError] = useState("");
 
   const itemsPerPage = 4;
+const navigate = useNavigate();
 
+<IconButton onClick={() => navigate(-1)}>
+  <ArrowBackIcon />
+</IconButton>
   useEffect(() => {
     loadBookings();
   }, []);

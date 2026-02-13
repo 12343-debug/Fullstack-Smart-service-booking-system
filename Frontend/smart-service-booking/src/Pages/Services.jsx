@@ -10,11 +10,22 @@ import {
 import { getServices } from "../services/servicesApi";
 import { useEffect, useState } from "react";
 import { createBooking } from "../services/bookingsApi";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { IconButton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
+
+
 
 const Services = () => {
   const [services, setServices] = useState([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const navigate = useNavigate();
+
+<IconButton onClick={() => navigate(-1)}>
+  <ArrowBackIcon />
+</IconButton>
 
   useEffect(() => {
     loadServices();

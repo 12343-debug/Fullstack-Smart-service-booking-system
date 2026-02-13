@@ -33,30 +33,32 @@ const NavBar = () => {
     >
       <Toolbar sx={{display:"flex",justifyContent:"space-between"}}>
         <Typography variant="h5" fontWeight="bold"  sx={{ cursor:"pointer", color:"1976d2"}}
-        onClick={()=>navigate("/services")}
+        onClick={()=>navigate("/home")}
         >
           Smart Service 
         </Typography>
         {!token && (
           <Box sx={{display:"flex", gap:2}}>
+             <Button
+              color="inherit"
+              sx={{ fontWeight: 200 ,fontSize:"22px",fontStyle:"inherit"}}
+              component={Link}
+              to="/home"
+            >
+              Home
+            </Button>
+            <Button color="success" component={Link} to="/register" variant="contained" sx={{padding:"5px",height: "32px",margin: "10px",fontWeight:600}}>
+              Register
+            </Button>
             <Button component={Link} to="/login" sx={{textTransform:"none"}}>
               Login
             </Button>
-            <Button color="inherit" component={Link} to="/" variant="contained" sx={{textTransform:"none",color:"green"}}>
-              Register
-            </Button>
+            
           </Box>
         )}
         {token && (
           <Box sx={{display:"flex",alignItems:"center",gap:2}}>
-            <Button
-              color="inherit"
-              sx={{ fontWeight: 200 ,fontSize:"22px",fontStyle:"inherit"}}
-              component={Link}
-              to="/"
-            >
-              Home
-            </Button>
+           
             <Button
               color="inherit"
               sx={{ fontSize:"22px", fontWeight: 500 }}

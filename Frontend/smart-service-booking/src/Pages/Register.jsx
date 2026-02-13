@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import AnimatedPage from "../components/AnimatedPage";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -27,6 +28,7 @@ const Register = () => {
   };
 
   return (
+    <AnimatedPage>
     <Container maxWidth="sm">
       <Box
         sx={{
@@ -107,6 +109,7 @@ const Register = () => {
         </Paper>
       </Box>
     </Container>
+    </AnimatedPage>
   );
 };
 

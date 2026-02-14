@@ -26,6 +26,7 @@ import { Skeleton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import AnimatedPage from "../components/AnimatedPage";
 
 
 
@@ -49,11 +50,12 @@ const Bookings = () => {
   const [error, setError] = useState("");
 
   const itemsPerPage = 4;
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
 <IconButton onClick={() => navigate(-1)}>
   <ArrowBackIcon />
 </IconButton>
+
   useEffect(() => {
     loadBookings();
   }, []);
@@ -181,6 +183,7 @@ const navigate = useNavigate();
   };
 
   return (
+    <AnimatedPage>
     <Container sx={{ mt: 10 }}>
       <Typography variant="h4" gutterBottom>
         My Bookings
@@ -474,6 +477,7 @@ const navigate = useNavigate();
         </DialogActions>
       </Dialog>
     </Container>
+    </AnimatedPage>
   );
 };
 

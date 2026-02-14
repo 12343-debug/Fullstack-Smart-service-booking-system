@@ -13,24 +13,48 @@ import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import "./Home.css";
 import AnimatedPage from "../components/AnimatedPage";
 
+const featureCardStyle = {
+  height: "100%",
+  textAlign: "center",
+  padding: 3,
+  cursor:"pointer",
+  borderRadius: 3,
+  transition: "all 0.3s ease",
+  background: "linear-gradient(135deg, #f47ed3, #5dfcf1)",
+  "&:hover": {
+    transform: "translateY(-8px) scale(1.03)",
+    boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
+    background: "linear-gradient(135deg, #2d9385, #bbdefb)",
+  },
+};
+
+
 const Home = () => {
   const navigate = useNavigate();
 
   return (
     <AnimatedPage>
-          <Box sx={{ width: "90vw", overflowX: "hidden" }}>
+          <Box 
+  sx={{
+    minHeight: "100vh",
+width:"100%",
+    overflowX:"hidden",
+    background: "linear-gradient(135deg, #f5f7fa, #c3cfe2)",
+    pt: 10,
+    pb: 10,
+  }}
+>
+
       
       {/* ================= HERO SECTION ================= */}
       <Box
         sx={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          background: "linear-gradient(135deg, #e3f2fd, #ffffff)",
+          width:"100%",
+          py:{xs:4,md:8}
         }}
       >
-        <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
+        <Container maxWidth="xl" disableGutters>
+          <Grid container spacing={4} alignItems="center" justifyContent="center">
             <Grid item xs={12} md={6}>
               <Typography variant="h3" fontWeight="bold" sx={{ mb: 3 }}>
                 Smart Service Booking Platform
@@ -56,9 +80,11 @@ const Home = () => {
                 src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
                 alt="service illustration"
                 style={{
-                  width: "80%",
-                  maxWidth: 420,
+                  width: "100%",
+                  maxWidth: 380,
+                  margin:"0 auto",
                   animation: "float 3s ease-in-out infinite",
+                  display:"block",
                 }}
               />
             </Grid>
@@ -67,6 +93,7 @@ const Home = () => {
       </Box>
 
       {/* ================= FEATURES SECTION ================= */}
+      <Box sx={{width:"100%",mt:10}}>
       <Container maxWidth="lg" sx={{ mt: 10 }}>
         <Typography variant="h4" textAlign="center" gutterBottom>
           Why Choose Our Platform?
@@ -91,7 +118,7 @@ const Home = () => {
             },
           ].map((item, index) => (
             <Grid item xs={12} md={4} key={index}>
-              <Card className="feature-card">
+              <Card className="feature-card" sx={featureCardStyle}>
                 <CardContent>
                   <Box className="feature-icon">{item.icon}</Box>
                   <Typography variant="h6" mt={2}>
@@ -106,6 +133,7 @@ const Home = () => {
           ))}
         </Grid>
       </Container>
+      </Box>
 
       {/* ================= HOW IT WORKS ================= */}
       <Container maxWidth="lg" sx={{ mt: 10, mb: 10 }}>

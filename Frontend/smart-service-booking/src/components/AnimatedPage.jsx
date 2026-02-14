@@ -1,21 +1,30 @@
 import { Box } from "@mui/material";
+import { motion } from "framer-motion";
+
+const pageVariants = {
+  initial: {
+    opacity: 0,
+    y: 20,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+  },
+  exit: {
+    opacity: 0,
+    y: -20,
+  },
+};
 
 const AnimatedPage = ({ children }) => {
   return (
     <Box
-      sx={{
-        animation: "fadeSlide 0.5s ease-in-out",
-        "@keyframes fadeSlide": {
-          from: {
-            opacity: 0,
-            transform: "translateY(20px)",
-          },
-          to: {
-            opacity: 1,
-            transform: "translateY(0)",
-          },
-        },
-      }}
+      component={motion.div}
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.4, ease: "easeInOut" }}
     >
       {children}
     </Box>

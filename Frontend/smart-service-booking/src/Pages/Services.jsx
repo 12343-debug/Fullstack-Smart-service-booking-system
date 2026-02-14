@@ -13,6 +13,7 @@ import { createBooking } from "../services/bookingsApi";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import AnimatedPage from "../components/AnimatedPage";
 
 
 
@@ -45,7 +46,8 @@ const Services = () => {
   };
 
   return (
-    <Container sx={{ mt: 4, width: "100%", height: "100%" }}>
+    <AnimatedPage>
+          <Container sx={{ mt: 4, width: "100%", height: "100%" }}>
       <Typography variant="h4" gutterBottom>
         Available services
       </Typography>
@@ -96,6 +98,8 @@ const Services = () => {
         ))}
       </Grid>
     </Container>
+    </AnimatedPage>
+
   );
 };
 

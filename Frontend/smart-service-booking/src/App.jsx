@@ -6,6 +6,9 @@ import Services from "./Pages/Services.jsx";
 import Bookings from "./Pages/Bookings.jsx";
 import Register from "./Pages/Register.jsx";
 import Login from "./Pages/Login.jsx";
+import AdminRoute from "./components/routes/AdminRoute.jsx";
+import AdminDashboard from "./Pages/admin/AdminDashboard.jsx";
+
 
 function App() {
   return (
@@ -20,6 +23,7 @@ function App() {
 
         <Route path="/services" element={<Services />} />
         <Route path="/bookings" element={<Bookings />} />
+        <Route path="/admin" element={<AdminRoute><AdminDashboard/></AdminRoute>}/>
       </Routes>
     </>
   );

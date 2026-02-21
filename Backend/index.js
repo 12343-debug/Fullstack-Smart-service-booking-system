@@ -200,6 +200,16 @@ app.put("/bookings/edit/:id", async (req, res) => {
   }
 });
 
+app.get("/admin/bookings", authMiddleware, async (req, res) => {
+  if (req.role !== "admin") {
+    return res.status(403).json({ message: "Access denied" });
+  }
+
+  const bookings = await Booking.find().populate("userId", "email");
+  res.json(bookings);
+});
+
+app.listen(5000, () => console.log("Server running on port 5000"));
 
 
 

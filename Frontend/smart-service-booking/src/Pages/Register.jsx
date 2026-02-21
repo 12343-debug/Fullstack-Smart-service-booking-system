@@ -37,8 +37,10 @@ const Register = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            textAlign:"-webkit-center"
           }}
         >
+          <Box sx={{width:"450px",maxWidth:400}}>
           <Paper elevation={6} sx={{ p: 4, width: "100%", borderRadius: 3 }}>
             <Typography
               variant="h4"
@@ -108,6 +110,7 @@ const Register = () => {
               </span>
             </Typography>
           </Paper>
+        </Box>
         </Box>
       </AnimatedPage>
     </PageWrapper>

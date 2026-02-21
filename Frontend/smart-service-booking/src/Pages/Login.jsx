@@ -36,14 +36,15 @@ const Login = () => {
       <AnimatedPage>
         <Box
           sx={{
-            minHeight: "100vh",
+            minHeight: "60vh",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+                textAlign:  " -webkit-center"
           }}
         >
-          <Container maxWidth="sm">
-            <Paper elevation={6} sx={{ p: 4, borderRadius: "3" }}>
+          <Box sx={{width:"450px",maxWidth:"400"}}>
+                        <Paper elevation={6} sx={{ p: 4, borderRadius: "3" }}>
               <Typography
                 variant="h4"
                 align="center"
@@ -102,8 +103,9 @@ const Login = () => {
                 </span>
               </Typography>
             </Paper>
-          </Container>
         </Box>
+        </Box>
+
       </AnimatedPage>
     </PageWrapper>
   );

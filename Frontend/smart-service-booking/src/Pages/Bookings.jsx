@@ -5,6 +5,7 @@ import {
   CardContent,
   Typography,
   Button,
+  Box
 } from "@mui/material";
 import {
   Dialog,
@@ -47,12 +48,10 @@ const Bookings = () => {
   // error msg
   const [error, setError] = useState("");
 
-  const itemsPerPage = 4;
+  const itemsPerPage = 6;
   const navigate = useNavigate();
 
-  <IconButton onClick={() => navigate(-1)}>
-    <ArrowBackIcon />
-  </IconButton>;
+ 
 
   useEffect(() => {
     loadBookings();
@@ -181,31 +180,40 @@ const Bookings = () => {
   };
 
   return (
-    <PageWrapper>
+    <Box sx={{backgroundColor:"#f5f7fa"}}>   
+       <PageWrapper >
       <AnimatedPage>
-        <Typography variant="h4" gutterBottom>
+        <IconButton onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h4" textAlign="center" gutterBottom>
           My Bookings
         </Typography>
         <div
           style={{
-            display: "flex",
+           display:"flex",
             gap: "20px",
             marginBottom: "25px",
             flexWrap: "wrap",
-            justifyContent: "center",
+            // width:"20px",
+            margin:"10px",
+            alignItems:"center",
+            justifyContent:"center"
+            
+            
           }}
         >
-          <Card sx={{ p: 2, minWidth: 150 }}>
+          <Card sx={{ p: 2, minWidth: 150 ,margin:"20px",backgroundColor:"darkgray",color:"green"}}>
             <Typography>Total</Typography>
             <Typography variant="h5">{totalCount}</Typography>
           </Card>
-          <Card sx={{ p: 2, minWidth: 150 }}>
+          <Card sx={{ p: 2, minWidth: 150 ,margin:"20px",backgroundColor:"darkgray",color:"deeppink",fontWeight:700}}>
             <Typography>Pending</Typography>
             <Typography variant="h5" color="orange">
               {pendingCount}
             </Typography>
           </Card>
-          <Card sx={{ p: 2, minWidth: 150 }}>
+          <Card sx={{ p: 2, minWidth: 150 ,margin:"20px",backgroundColor:"darkgray",color:"bisque",fontWeight:700}}>
             <Typography>completed</Typography>
             <Typography variant="h5" color="green">
               {completedCount}
@@ -240,7 +248,7 @@ const Bookings = () => {
           </Button>
         </div>
 
-        <div style={{ marginBottom: "20px" }}>
+        <div style={{ marginBottom: "20px" ,textAlign:"center"}}>
           <Button
             variant={filter === "All" ? "contained" : "outlined"}
             onClick={() => setFilter("All")}
@@ -264,15 +272,15 @@ const Bookings = () => {
           </Button>
         </div>
 
-        <div style={{ marginTop: "20px" }}>
+        <div style={{ marginTop: "20px" ,textAlign:"center"}}>
           <Button onClick={() => setSort("newest")}>Newest</Button>
           <Button onClick={() => setSort("oldest")}>Oldest</Button>
           <Button onClick={() => setSort("nameASC")}>NameASC</Button>
           <Button onClick={() => setSort("nameDSC")}>nameDSC</Button>
         </div>
 
-        <div style={{ marginTop: "20px" }}>
-          <Button disabled={page === 4} onClick={() => setPage(page - 1)}>
+        <div style={{ marginTop: "20px",textAlign:"center" }}>
+          <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
             Prev
           </Button>
           <span style={{ margin: "0 10px" }}>
@@ -322,6 +330,7 @@ const Bookings = () => {
                 display: "grid",
                 gridTemplateColumns: "repeat(3,1fr)",
                 gap: "20px",
+                
               }}
             >
               {paginatedBookings.map((b) => (
@@ -331,7 +340,7 @@ const Bookings = () => {
                     mb: 2,
                     p: 2,
                     borderRadius: 3,
-                    backgroundColor: "#f9fafb",
+                    backgroundColor: "#ffffff",
                     border: "1px solid #e0e0e0",
                     boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
                     transition: "0.3s",
@@ -341,7 +350,7 @@ const Bookings = () => {
                     },
                   }}
                 >
-                  <CardContent>
+                  <CardContent sx={{textAlign:"center"}}>
                     {editId == b._id ? (
                       <>
                         <input
@@ -480,6 +489,8 @@ const Bookings = () => {
         </Dialog>
       </AnimatedPage>
     </PageWrapper>
+    </Box>
+
   );
 };
 

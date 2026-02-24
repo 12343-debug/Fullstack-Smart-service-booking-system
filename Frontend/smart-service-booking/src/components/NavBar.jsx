@@ -17,6 +17,7 @@ import { useState } from "react";
 const NavBar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
   // dropdown state
   const [anchorEl, setAnchorEl] = useState(null);
@@ -78,8 +79,22 @@ const NavBar = () => {
             </Button>
           </Box>
         )}
+
         {token && (
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+
+            {role === "admin" && (
+              <Box sx={{ display: "flex", gap: 2 }}>
+                <Button
+                  color="inherit"
+                  sx={{ fontSize: "20px", fontWeight: 600 }}
+                  onClick={() => navigate("/admin")}
+                >
+                  Admin
+                </Button>
+              </Box>
+            )}
+            
             <Button
               color="inherit"
               sx={{ fontSize: "22px", fontWeight: 500 }}
@@ -88,6 +103,7 @@ const NavBar = () => {
             >
               Services
             </Button>
+
             <Button
               color="inherit"
               component={Link}

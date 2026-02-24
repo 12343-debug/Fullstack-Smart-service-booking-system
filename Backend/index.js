@@ -98,7 +98,7 @@ app.post("/login", async (req, res) => {
   const token = jwt.sign(
   {
     id: user._id,
-    role: user.role   // 👈 THIS WAS MISSING
+    role: user.role  
   },
   process.env.JWT_SECRET,
   { expiresIn: "1d" }
@@ -183,7 +183,7 @@ app.put("/bookings/:id",authMiddleware, async (req, res) => {
 
 
 
-// EDIT NAME + PHONE
+// edit name and phone number
 app.put("/bookings/edit/:id", async (req, res) => {
   try {
     const { userName, Phone } = req.body;
@@ -212,7 +212,7 @@ app.get("/admin/bookings", authMiddleware, async (req, res) => {
 app.listen(5000, () => console.log("Server running on port 5000"));
 
 
-
+ // 👈 THIS WAS MISSING
 
 
 

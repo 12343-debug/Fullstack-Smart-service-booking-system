@@ -10,6 +10,8 @@ const User = require('./models/User');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("./middler/authMiddleware");
+const adminMiddleware = require("./middler/adminMiddleware");
+
 
 
 const app = express();
@@ -22,6 +24,7 @@ connectDB();
 
 const Service = require('./models/Service');
 const Booking = require('./models/Booking');
+const adminMiddleware = require("./middler/adminMiddleware");
 
 
 // authentication
@@ -200,7 +203,7 @@ app.put("/bookings/edit/:id", async (req, res) => {
   }
 });
 
-app.get("/admin/bookings", authMiddleware, async (req, res) => {
+app.get("/admin/bookings", authMiddleware,authMiddleware, async (req, res) => {
   if (req.role !== "admin") {
     return res.status(403).json({ message: "Access denied" });
   }

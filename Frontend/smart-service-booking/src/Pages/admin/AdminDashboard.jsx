@@ -33,6 +33,13 @@ const AdminDashboard = () => {
     loadAllBookings(); // refresh data
   };
 
+   const handleDelete = async (id) => {
+    await api.delete(`/bookings/${id}`, {
+      headers: { Authorization: localStorage.getItem("token") },
+    });
+    loadAllBookings();
+  };
+
   return (
     <PageWrapper>
       <AnimatedPage>
@@ -80,6 +87,13 @@ const AdminDashboard = () => {
             >
               Mark Completed
             </Button>
+            <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => handleDelete(b._id)}
+                >
+                  Delete
+                </Button>
           </Card>
         ))}
       </AnimatedPage>

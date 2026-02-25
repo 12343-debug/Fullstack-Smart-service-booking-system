@@ -6,185 +6,163 @@ console.log("🔥 INDEX.JS LOADED 🔥");
 
 const express = require("express");
 const cors = require("cors");
-const User = require('./models/User');
+const User = require("./models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("./middler/authMiddleware");
 const adminMiddleware = require("./middler/adminMiddleware");
-
-
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-const connectDB =require('./db');
+const connectDB = require("./db");
 connectDB();
 
-const Service = require('./models/Service');
-const Booking = require('./models/Booking');
-const adminMiddleware = require("./middler/adminMiddleware");
-
+const Service = require("./models/Service");
+const Booking = require("./models/Booking");
 
 // authentication
-app.post("/register", async(req,res)=>{
+app.post("/register", async (req, res) => {
   try {
-    const {name,email,password} =req.body;
+    const { name, email, password } = req.body;
 
-     // 1. Validation
-    if(!name || !email || !password){
-      return res.status(400).json({ message:"All fields required" });
+    // 1. Validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields required" });
     }
 
-    if(password.length < 6){
-      return res.status(400).json({ message:"Password must be 6 characters" });
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be 6 characters" });
     }
 
     // 2. Check existing user
     const existUser = await User.findOne({ email });
-    if(existUser){
-      return res.status(400).json({ message:"Email already registered" });
+    if (existUser) {
+      return res.status(400).json({ message: "Email already registered" });
     }
-    const hashed = await bcrypt.hash(password,10);
+    const hashed = await bcrypt.hash(password, 10);
 
     const user = new User({
-    name,
-    email,
-    password:hashed
-  });
-  await user.save();
-  res.send("user registered");
+      name,
+      email,
+      password: hashed,
+    });
+    await user.save();
+    res.send("user registered");
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message:"Server error" });
-    
+    res.status(500).json({ message: "Server error" });
   }
-  
 });
-
 
 // login api email,password
 app.post("/login", async (req, res) => {
   try {
-
     const { email, password } = req.body;
 
     // 1. Validation
-    if(!email || !password){
-      return res.status(400).json({ message:"All fields required" });
-
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields required" });
     }
-  
-
 
     // 2. Find user
     const user = await User.findOne({ email });
-    if(!user){
-      return res.status(400).json({ message:"Invalid credentials" });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
       console.log("USER:", user);
     }
 
     // 3. Compare password
     const isMatch = await bcrypt.compare(password, user.password);
-    if(!isMatch){
-      return res.status(400).json({ message:"Invalid credentials" });
-
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
     }
     console.log("JWT SECRET:", process.env.JWT_SECRET);
 
     // 4. Create token
-   if(!process.env.JWT_SECRET){
-  return res.status(500).json({message:"JWT secret missing"});
-}
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: "JWT secret missing" });
+    }
 
-  const token = jwt.sign(
-  {
-    id: user._id,
-    role: user.role  
-  },
-  process.env.JWT_SECRET,
-  { expiresIn: "1d" }
-);
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+    );
 
-res.json({
-  token,
-  role: user.role   // optional but useful
-});
-
+    res.json({
+      token,
+      role: user.role, // optional but useful
+    });
   } catch (error) {
     console.log(error);
-    res.status(500 ).json({ message:"Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 });
-
 
 app.get("/", (req, res) => {
   res.send("Backend is running");
 });
 
-app.get("/services", async(req, res) => {
- const data = await Service.find();
- res.json(data);
+app.get("/services", async (req, res) => {
+  const data = await Service.find();
+  res.json(data);
 });
 
-app.post("/add-service",async(req,res)=>{
-  const {title,icon,image}=req.body;
-  const service =new Service({
+app.post("/add-service", async (req, res) => {
+  const { title, icon, image } = req.body;
+  const service = new Service({
     title,
     icon,
-    image
+    image,
   });
   await service.save();
   res.send("services added");
-    // const serviceData = new Service({
-    //     title:req.body.title,
-    // });
+  // const serviceData = new Service({
+  //     title:req.body.title,
+  // });
 
-    // await serviceData.save();
-    // res.send("data added");
-})
-
-// adding bookings
-app.post("/book",authMiddleware, async (req, res) => {
-  try{
-  const booking = await Booking({
-    serviceTitle: req.body.serviceTitle,
-    userName:req.body.userName,
-    Phone:req.body.Phone,
-    userId:req.userId
-  });
-  await booking.save();
-  res.send("Booking saved");
-} catch (err){
-  res.status(500).send("booking failed");
-}
+  // await serviceData.save();
+  // res.send("data added");
 });
 
-
+// adding bookings
+app.post("/book", authMiddleware, async (req, res) => {
+  try {
+    const booking = await Booking({
+      serviceTitle: req.body.serviceTitle,
+      userName: req.body.userName,
+      Phone: req.body.Phone,
+      userId: req.userId,
+    });
+    await booking.save();
+    res.send("Booking saved");
+  } catch (err) {
+    res.status(500).send("booking failed");
+  }
+});
 
 // book api(getting bookings)
-app.get("/bookings",authMiddleware, async(req,res)=>{
-    const data = await Booking.find({userId: req.userId});
-     res.json(data);
+app.get("/bookings", authMiddleware, async (req, res) => {
+  const data = await Booking.find({ userId: req.userId });
+  res.json(data);
 });
 
 // delete bookings api
-app.delete("/bookings/:id",authMiddleware, async(req,res)=>{
-  await Booking.findByIdAndDelete(req.params.id,);
+app.delete("/bookings/:id", authMiddleware, async (req, res) => {
+  await Booking.findByIdAndDelete(req.params.id);
   res.send("Bookings Deleted");
-
 });
 
-app.put("/bookings/:id",authMiddleware, async (req, res) => {
-  await Booking.findByIdAndUpdate(
-    req.params.id,
-    { status: req.body.status }
-  );
+app.put("/bookings/:id", authMiddleware, async (req, res) => {
+  await Booking.findByIdAndUpdate(req.params.id, { status: req.body.status });
   res.send("Booking Updated");
 });
-
-
 
 // edit name and phone number
 app.put("/bookings/edit/:id", async (req, res) => {
@@ -193,7 +171,7 @@ app.put("/bookings/edit/:id", async (req, res) => {
 
     await Booking.findByIdAndUpdate(req.params.id, {
       userName,
-      Phone
+      Phone,
     });
 
     res.send("Booking details updated");
@@ -203,20 +181,21 @@ app.put("/bookings/edit/:id", async (req, res) => {
   }
 });
 
-app.get("/admin/bookings", authMiddleware,authMiddleware, async (req, res) => {
-  if (req.role !== "admin") {
-    return res.status(403).json({ message: "Access denied" });
-  }
+app.get(
+  "/admin/bookings",
+  authMiddleware,
+  adminMiddleware,
+  async (req, res) => {
+    if (req.userRole !== "admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
 
-  const bookings = await Booking.find().populate("userId", "email");
-  res.json(bookings);
-});
+    const bookings = await Booking.find().populate("userId", "email");
+    res.json(bookings);
+  },
+);
 
 app.listen(5000, () => console.log("Server running on port 5000"));
-
-
- // 👈 THIS WAS MISSING
-
 
 
 app.listen(5000, () => {

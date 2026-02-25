@@ -5,17 +5,17 @@ const AdminNavbar = () => {
   const navigate = useNavigate();
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "#2c2c2c" }}>
+    <AppBar position="static" sx={{ backgroundColor: "black" }}>
       <Toolbar sx={{ display: "flex", justifyContent: "center", gap: 3 }}>
-        <Button color="inherit" onClick={() => navigate("/admin")}>
+        <Button color="rgb(15,23,42)" sx={{fontWeight:700}} onClick={() => navigate("/admin")}>
           Dashboard
         </Button>
 
-        <Button color="inherit" onClick={() => navigate("/admin/add-service")}>
+        <Button color="rgb(15,23,42)" sx={{fontWeight:700}} onClick={() => navigate("/admin/add-service")}>
           Add Service
         </Button>
 
-        <Button color="inherit" onClick={() => navigate("/services")}>
+        <Button color="rgb(15,23,42)" sx={{fontWeight:700}} onClick={() => navigate("/services")}>
           Available Services
         </Button>
       </Toolbar>

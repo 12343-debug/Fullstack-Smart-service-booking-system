@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography, Button } from "@mui/material";
+import { Card, CardContent, Typography, Button, Grid,Box } from "@mui/material";
 import PageWrapper from "../../components/PageWrapper";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
@@ -6,8 +6,6 @@ import api from "../../services/api";
 import AnimatedPage from "../../components/AnimatedPage";
 import { updateBookingStatus } from "../../services/bookingsApi";
 import AdminNavbar from "./AdminNavBar";
-
-
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState([]);
@@ -33,7 +31,7 @@ const AdminDashboard = () => {
     loadAllBookings(); // refresh data
   };
 
-   const handleDelete = async (id) => {
+  const handleDelete = async (id) => {
     await api.delete(`/bookings/${id}`, {
       headers: { Authorization: localStorage.getItem("token") },
     });
@@ -41,13 +39,19 @@ const AdminDashboard = () => {
   };
 
   return (
-    <PageWrapper>
+    
+    <PageWrapper style={{backgroundColor:"aliceblue"}}>
+      <AdminNavbar sx={{ mt: 7 ,marginTop:"10px"}} />
       <AnimatedPage>
-        <AdminNavbar/>
-        <Typography variant="h4" gutterBottom>
+        
+        <Typography
+          variant="h4"
+          sx={{ textAlign: "center", mt: 3, fontFamily: "serif" }}
+          gutterBottom
+        >
           Admin Dashboard
         </Typography>
-        <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
+        <div style={{ display: "flex", gap: "20px" }}>
           <Card sx={{ flex: 1, backgroundColor: "#e3f2fd" }}>
             <CardContent>
               <Typography variant="h6">Total Bookings</Typography>
@@ -70,32 +74,57 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        {bookings.map((b) => (
-          <Card key={b._id} sx={{ mb: 2 }}>
-            <CardContent>
-              <Typography>Name: {b.userName}</Typography>
-              <Typography>Phone: {b.Phone}</Typography>
-              <Typography>Service: {b.serviceTitle}</Typography>
-              <Typography>Status: {b.status}</Typography>
-            </CardContent>
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ mt: 1 }}
-              disabled={b.status === "completed"}
-              onClick={() => handleComplete(b._id)}
-            >
-              Mark Completed
-            </Button>
-            <Button
-                  variant="contained"
-                  color="error"
-                  onClick={() => handleDelete(b._id)}
-                >
-                  Delete
-                </Button>
-          </Card>
-        ))}
+        <Grid container spacing={3} sx={{marginTop:"22px",justifyContent:"center"}}>
+          {bookings.map((b) => (
+            <Grid item xs={12} sm={6} md={3} key={b._id}>
+              <Card
+                sx={{
+                  height: "100%",
+                  borderRadius: 3,
+                  backgroundColor: "#f9fafb",
+                  boxShadow: "0 6px 16px rgba(0,0,0,0.08)",
+                  transition: "0.3s",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 10px 22px rgba(0,0,0,0.15)",
+                    
+                    
+                  },
+                }}
+              >
+                <CardContent>
+                  <Typography fontWeight="bold">👤Name: {b.userName}</Typography>
+                  <Typography variant="body2">📞Phone: {b.Phone}</Typography>
+                  <Typography variant="body2">🛠 Service: {b.serviceTitle}</Typography>
+                  <Typography  mt={1}
+                    fontWeight="bold"
+                    color={b.status === "completed" ? "green" : "orange"}>Status: {b.status}</Typography>
+                  <Box mt={2} display="flex" gap={1}>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      sx={{ mt: 1 }}
+                      disabled={b.status === "completed"}
+                      onClick={() => handleComplete(b._id)}
+                    >
+                      Mark Completed
+                    </Button>
+                    <Button
+                    sx={{height:"35px",marginTop:"8px"}}
+                    size="small"
+                      variant="contained"
+                      
+                      color="error"
+                      onClick={() => handleDelete(b._id)}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       </AnimatedPage>
     </PageWrapper>
   );

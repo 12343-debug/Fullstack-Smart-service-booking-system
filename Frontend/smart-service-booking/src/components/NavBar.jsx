@@ -37,9 +37,9 @@ const NavBar = () => {
   };
   return (
     <AppBar
-      position="fixed"
+      position=""
       elevation={2}
-      sx={{ backgroundColor: "#ffffff", color: "#1a1a1a", px: 2 }}
+      sx={{ backgroundColor: "beige", color: "#1a1a1a", px: 2,borderRadius:"40px",marginBottom:"10px",mt:3 }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography
@@ -132,8 +132,8 @@ const NavBar = () => {
                 My Bookings
               </MenuItem>
 
-              <MenuItem onClick={handleLogout}>
-                <LogoutIcon fontSize="small" sx={{ mr: 1 }} />
+              <MenuItem onClick={handleLogout} sx={{color:"red"}}>
+                <LogoutIcon fontSize="small" sx={{ mr: 1 ,color:"red"}} />
                 Logout
               </MenuItem>
             </Menu>

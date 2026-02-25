@@ -15,9 +15,11 @@ import PageWrapper from "../components/PageWrapper";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    
     try {
       const res = await loginUser(email, password);
 
@@ -70,6 +72,7 @@ const Login = () => {
                 margin="normal"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                
               />
 
               <TextField

@@ -46,7 +46,7 @@ const Services = () => {
   };
 
   return (
-    <Box sx={{backgroundColor:"#ababab",minHeight:"100vh",p:2}}>
+    <Box sx={{backgroundColor:"##d9d9d9",minHeight:"100vh",p:2}}>
     <PageWrapper>
       
       <AnimatedPage>

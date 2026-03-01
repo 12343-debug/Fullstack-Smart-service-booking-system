@@ -180,7 +180,7 @@ const Bookings = () => {
   };
 
   return (
-    <Box sx={{backgroundColor:"#f5f7fa"}}>   
+    <Box sx={{backgroundColor:"#f5f7fa",marginTop:"-5px"}}>   
        <PageWrapper >
       <AnimatedPage>
         <IconButton onClick={() => navigate(-1)}>

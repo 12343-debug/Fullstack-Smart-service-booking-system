@@ -3,13 +3,19 @@ import { Button, Card, CardContent, TextField, Typography } from "@mui/material"
 import PageWrapper from "../../components/PageWrapper";
 import AnimatedPage from "../../components/AnimatedPage";
 import api from "../../services/api";
+import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { IconButton } from "@mui/material";
+
 
 const AddService = () => {
   const [title, setTitle] = useState("");
   const [icon, setIcon] = useState("");
   const [image, setImage] = useState("");
+  const navigate = useNavigate();
 
   const handleAddService = async () => {
+    
     await api.post(
       "/add-service",
       { title, icon, image },
@@ -29,6 +35,12 @@ const AddService = () => {
   return (
     <PageWrapper>
       <AnimatedPage>
+        <IconButton
+  onClick={() => navigate("/admin/services")}
+  sx={{ mb: 2 }}
+>
+  <ArrowBackIcon />
+</IconButton>
         <Card sx={{ maxWidth: 500, mx: "auto" }}>
           <CardContent>
             <Typography variant="h5" gutterBottom>

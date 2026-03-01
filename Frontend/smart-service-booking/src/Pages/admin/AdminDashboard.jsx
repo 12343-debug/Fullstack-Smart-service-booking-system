@@ -1,4 +1,11 @@
-import { Card, CardContent, Typography, Button, Grid,Box } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Grid,
+  Box,
+} from "@mui/material";
 import PageWrapper from "../../components/PageWrapper";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
@@ -6,11 +13,15 @@ import api from "../../services/api";
 import AnimatedPage from "../../components/AnimatedPage";
 import { updateBookingStatus } from "../../services/bookingsApi";
 import AdminNavbar from "./AdminNavBar";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { IconButton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const totalBookings = bookings.length;
   const pendingBookings = bookings.filter((b) => b.status === "Pending").length;
+  const navigate = useNavigate();
   const completedBookings = bookings.filter(
     (b) => b.status === "completed",
   ).length;
@@ -39,10 +50,14 @@ const AdminDashboard = () => {
   };
 
   return (
-    
-    <PageWrapper style={{backgroundColor:"aliceblue"}}>
-      <AdminNavbar sx={{ mt: 7 ,marginTop:"10px"}} />
+    <PageWrapper style={{ backgroundColor: "aliceblue" }}>
+        <IconButton onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
+        </IconButton>
+      <AdminNavbar sx={{ mt: 7, marginTop: "10px" }} />
+      
       <AnimatedPage>
+       
         
         <Typography
           variant="h4"
@@ -74,7 +89,11 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        <Grid container spacing={3} sx={{marginTop:"22px",justifyContent:"center"}}>
+        <Grid
+          container
+          spacing={3}
+          sx={{ marginTop: "22px", justifyContent: "center" }}
+        >
           {bookings.map((b) => (
             <Grid item xs={12} sm={6} md={3} key={b._id}>
               <Card
@@ -87,18 +106,24 @@ const AdminDashboard = () => {
                   "&:hover": {
                     transform: "translateY(-4px)",
                     boxShadow: "0 10px 22px rgba(0,0,0,0.15)",
-                    
-                    
                   },
                 }}
               >
                 <CardContent>
-                  <Typography fontWeight="bold">👤Name: {b.userName}</Typography>
+                  <Typography fontWeight="bold">
+                    👤Name: {b.userName}
+                  </Typography>
                   <Typography variant="body2">📞Phone: {b.Phone}</Typography>
-                  <Typography variant="body2">🛠 Service: {b.serviceTitle}</Typography>
-                  <Typography  mt={1}
+                  <Typography variant="body2">
+                    🛠 Service: {b.serviceTitle}
+                  </Typography>
+                  <Typography
+                    mt={1}
                     fontWeight="bold"
-                    color={b.status === "completed" ? "green" : "orange"}>Status: {b.status}</Typography>
+                    color={b.status === "completed" ? "green" : "orange"}
+                  >
+                    Status: {b.status}
+                  </Typography>
                   <Box mt={2} display="flex" gap={1}>
                     <Button
                       variant="contained"
@@ -110,10 +135,9 @@ const AdminDashboard = () => {
                       Mark Completed
                     </Button>
                     <Button
-                    sx={{height:"35px",marginTop:"8px"}}
-                    size="small"
+                      sx={{ height: "35px", marginTop: "8px" }}
+                      size="small"
                       variant="contained"
-                      
                       color="error"
                       onClick={() => handleDelete(b._id)}
                     >

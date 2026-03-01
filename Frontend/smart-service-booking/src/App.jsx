@@ -9,7 +9,7 @@ import Login from "./Pages/Login.jsx";
 import AdminRoute from "./components/routes/AdminRoute.jsx";
 import AdminDashboard from "./Pages/admin/AdminDashboard.jsx";
 import AddService from "./Pages/admin/AddService.jsx";
-
+import AdminServices from "./Pages/admin/AdminServices.jsx";
 
 function App() {
   return (
@@ -24,8 +24,30 @@ function App() {
 
         <Route path="/services" element={<Services />} />
         <Route path="/bookings" element={<Bookings />} />
-        <Route path="/admin" element={<AdminRoute><AdminDashboard/></AdminRoute>}/>
-        <Route path="admin/add-service" element={<AdminRoute><AddService /></AdminRoute>}  />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="admin/add-service"
+          element={
+            <AdminRoute>
+              <AddService />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/services"
+          element={
+            <AdminRoute>
+              <AdminServices />
+            </AdminRoute>
+          }
+        />
       </Routes>
     </>
   );

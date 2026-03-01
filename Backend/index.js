@@ -198,6 +198,12 @@ app.get(
 app.listen(5000, () => console.log("Server running on port 5000"));
 
 
+app.delete("/services/:id", authMiddleware, adminMiddleware, async (req, res) => {
+  await Service.findByIdAndDelete(req.params.id);
+  res.json({ message: "Service deleted successfully" });
+});
+
+
 app.listen(5000, () => {
   console.log("server running on port 5000");
 });

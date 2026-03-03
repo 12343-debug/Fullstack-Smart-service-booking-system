@@ -11,6 +11,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("./middler/authMiddleware");
 const adminMiddleware = require("./middler/adminMiddleware");
+// const sendEmail = require("./sendEmail");
 
 const app = express();
 
@@ -50,6 +51,11 @@ app.post("/register", async (req, res) => {
       password: hashed,
     });
     await user.save();
+//     await sendEmail(
+//   email,
+//   "Welcome to Smart Service Booking",
+//   `Hi ${name},\n\nThank you for registering with Smart Service Booking System.\nWe are happy to have you!\n\n- Team Smart Service`
+// );
     res.send("user registered");
   } catch (error) {
     console.log(error);
@@ -106,7 +112,9 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
+  
   res.send("Backend is running");
+  
 });
 
 app.get("/services", async (req, res) => {

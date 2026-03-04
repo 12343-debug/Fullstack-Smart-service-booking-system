@@ -14,6 +14,7 @@ const adminMiddleware = require("./middler/adminMiddleware");
 // const sendEmail = require("./sendEmail");
 
 const app = express();
+const otpStore = {};
 
 app.use(cors());
 app.use(express.json());
@@ -141,20 +142,27 @@ app.post("/add-service", async (req, res) => {
 
 // adding bookings
 app.post("/book", authMiddleware, async (req, res) => {
-  try {
-    const booking = await Booking({
-      serviceTitle: req.body.serviceTitle,
-      userName: req.body.userName,
-      Phone: req.body.Phone,
-      userId: req.userId,
-    });
-    await booking.save();
-    res.send("Booking saved");
-  } catch (err) {
-    res.status(500).send("booking failed");
-  }
-});
 
+  const { serviceTitle, userName, Phone } = req.body;
+
+  const phoneRegex = /^[6-9]\d{9}$/;
+
+  if(!phoneRegex.test(Phone)){
+    return res.status(400).json({message:"Invalid phone number"});
+  }
+
+  const booking = new Booking({
+    serviceTitle,
+    userName,
+    Phone,
+    userId:req.userId
+  });
+
+  await booking.save();
+
+  res.send("Booking saved");
+
+});
 // book api(getting bookings)
 app.get("/bookings", authMiddleware, async (req, res) => {
   const data = await Booking.find({ userId: req.userId });
@@ -209,6 +217,34 @@ app.listen(5000, () => console.log("Server running on port 5000"));
 app.delete("/services/:id", authMiddleware, adminMiddleware, async (req, res) => {
   await Service.findByIdAndDelete(req.params.id);
   res.json({ message: "Service deleted successfully" });
+});
+
+
+// otp verification
+app.post("/send-otp", (req, res) => {
+  const { phone } = req.body;
+
+  const otp = Math.floor(100000 + Math.random() * 900000);
+
+  otpStore[phone] = otp;
+
+  console.log("OTP for", phone, ":", otp); // simulate SMS
+
+  res.json({ message: "OTP sent successfully" });
+});
+
+// verifying otp
+app.post("/verify-otp", (req, res) => {
+
+  const { phone, otp } = req.body;
+
+  if (otpStore[phone] == otp) {
+    delete otpStore[phone];
+    return res.json({ verified: true });
+  }
+
+  res.status(400).json({ message: "Invalid OTP" });
+
 });
 
 

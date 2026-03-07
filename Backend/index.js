@@ -143,7 +143,7 @@ app.post("/add-service", async (req, res) => {
 // adding bookings
 app.post("/book", authMiddleware, async (req, res) => {
 
-  const { serviceTitle, userName, Phone } = req.body;
+  const { serviceTitle, userName, Phone ,slot} = req.body;
 
   const phoneRegex = /^[6-9]\d{9}$/;
 
@@ -155,6 +155,7 @@ app.post("/book", authMiddleware, async (req, res) => {
     serviceTitle,
     userName,
     Phone,
+    slot,
     userId:req.userId
   });
 
@@ -244,6 +245,30 @@ app.post("/verify-otp", (req, res) => {
   }
 
   res.status(400).json({ message: "Invalid OTP" });
+
+});
+
+// booking slots api
+app.get("/available-slots", async (req,res)=>{
+
+const allSlots = [
+"10:00 AM",
+"11:00 AM",
+"12:00 PM",
+"1:00 PM",
+"2:00 PM",
+"3:00 PM",
+"4:00 PM",
+"5:00 PM"
+];
+
+const bookings = await Booking.find();
+
+const bookedSlots = bookings.map(b => b.slot);
+
+const availableSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
+
+res.json(availableSlots);
 
 });
 

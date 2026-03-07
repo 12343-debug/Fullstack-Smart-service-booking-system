@@ -6,6 +6,11 @@ const bookingSchema = new mongoose.Schema(
     userName: String,
     Phone: String,
 
+    slot:{
+    type:String,
+    required:true
+  },
+
     userId:{
       type:mongoose.Schema.Types.ObjectId,
       ref:'User',
@@ -25,7 +30,8 @@ const bookingSchema = new mongoose.Schema(
   },
     {
     timestamps: true   
-  }
+  },
+  
   
 );
 

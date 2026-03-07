@@ -26,11 +26,19 @@ const Services = () => {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
+  const [slots, setSlots] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState("");
 
   const navigate = useNavigate();
 
+  // available slots
+  const loadSlots = async () => {
+    const res = await api.get("/available-slots");
+    setSlots(res.data);
+  };
   useEffect(() => {
     loadServices();
+    loadSlots();
   }, []);
 
   const loadServices = async () => {
@@ -46,6 +54,10 @@ const Services = () => {
       setError("Name is required");
       return;
     }
+    if (!selectedSlot) {
+  setError("Please select a time slot");
+  return;
+}
 
     if (!phoneRegex.test(phone)) {
       setError("Enter valid 10 digit phone number");
@@ -58,12 +70,16 @@ const Services = () => {
       return;
     }
 
-    await createBooking(title, name, phone);
+    await createBooking(title, name, phone,selectedSlot);
 
     alert("Booking Successfully");
 
     setName("");
-    setPhone("");
+  setPhone("");
+  setSelectedSlot("");
+  setOtp("");
+  setOtpSent(false);
+  setOtpVerified(false);
   };
 
   // otp
@@ -114,14 +130,26 @@ const Services = () => {
           </Typography>
           <div style={{ textAlign: "center" }}>
             <input
-              style={{ padding: "8px", margin: "17px",border:"revert" }}
+              style={{ padding: "8px", margin: "17px", border: "revert" }}
               placeholder="Your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
+            <select
+              value={selectedSlot}
+              onChange={(e) => setSelectedSlot(e.target.value)}
+            >
+              <option value="">Select Slot</option>
+
+              {slots.map((slot) => (
+                <option key={slot} value={slot}>
+                  {slot}
+                </option>
+              ))}
+            </select>
 
             <input
-              style={{ padding: "8px", marginLeft: "15px" ,border:"revert"}}
+              style={{ padding: "8px", marginLeft: "15px", border: "revert" }}
               placeholder="Phone number"
               value={phone}
               onChange={(e) => {
@@ -129,17 +157,27 @@ const Services = () => {
                 setError("");
               }}
             />
-            <Button onClick={sendOTP} sx={{margin:"0px",border:"none",color:"green"}}>Send OTP</Button>
+            <Button
+              onClick={sendOTP}
+              sx={{ margin: "0px", border: "none", color: "green" }}
+            >
+              Send OTP
+            </Button>
             {otpSent && (
               <>
                 <input
-                style={{border:"none",padding:"9px"}}
+                  style={{ border: "none", padding: "9px" }}
                   placeholder="Enter OTP"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                 />
 
-                <Button onClick={verifyOTP} sx={{border:"none",margin:"23px",padding:"3px"}}>Verify OTP</Button>
+                <Button
+                  onClick={verifyOTP}
+                  sx={{ border: "none", margin: "23px", padding: "3px" }}
+                >
+                  Verify OTP
+                </Button>
               </>
             )}
             {error && (

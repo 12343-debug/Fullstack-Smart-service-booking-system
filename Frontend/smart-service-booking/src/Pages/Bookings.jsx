@@ -5,7 +5,7 @@ import {
   CardContent,
   Typography,
   Button,
-  Box
+  Box,
 } from "@mui/material";
 import {
   Dialog,
@@ -50,8 +50,6 @@ const Bookings = () => {
 
   const itemsPerPage = 6;
   const navigate = useNavigate();
-
- 
 
   useEffect(() => {
     loadBookings();
@@ -180,317 +178,342 @@ const Bookings = () => {
   };
 
   return (
-    <Box sx={{backgroundColor:"rgb(255, 255, 255)",marginTop:"-5px"}}>   
-       <PageWrapper >
-      <AnimatedPage>
-        <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h4" textAlign="center" gutterBottom>
-          My Bookings
-        </Typography>
-        <div
-          style={{
-           display:"flex",
-            gap: "20px",
-            marginBottom: "25px",
-            flexWrap: "wrap",
-            // width:"20px",
-            margin:"10px",
-            alignItems:"center",
-            justifyContent:"center"
-            
-            
-          }}
-        >
-          <Card sx={{ p: 2, minWidth: 150 ,margin:"20px",backgroundColor:"darkgray",color:"green"}}>
-            <Typography>Total</Typography>
-            <Typography variant="h5">{totalCount}</Typography>
-          </Card>
-          <Card sx={{ p: 2, minWidth: 150 ,margin:"20px",backgroundColor:"darkgray",color:"deeppink",fontWeight:700}}>
-            <Typography>Pending</Typography>
-            <Typography variant="h5" color="orange">
-              {pendingCount}
-            </Typography>
-          </Card>
-          <Card sx={{ p: 2, minWidth: 150 ,margin:"20px",backgroundColor:"darkgray",color:"bisque",fontWeight:700}}>
-            <Typography>completed</Typography>
-            <Typography variant="h5" color="green">
-              {completedCount}
-            </Typography>
-          </Card>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            gap: "15px",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: "25px",
-            flexWrap: "wrap",
-          }}
-        >
-          <input
-            type="text"
-            placeholder="search by name or phone"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{
-              padding: "10px",
-              width: "300px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              outline: "none",
-            }}
-          />
-          <Button onClick={loadBookings} variant="contained">
-            Refresh
-          </Button>
-        </div>
-
-        <div style={{ marginBottom: "20px" ,textAlign:"center"}}>
-          <Button
-            variant={filter === "All" ? "contained" : "outlined"}
-            onClick={() => setFilter("All")}
-            sx={{ mr: 1 }}
-          >
-            All
-          </Button>
-          <Button
-            variant={filter === "Pending" ? "contained" : "outlined"}
-            onClick={() => setFilter("Pending")}
-            sx={{ mr: 1 }}
-          >
-            Pending
-          </Button>
-          <Button
-            variant={filter === "completed" ? "contained" : "outlined"}
-            onClick={() => setFilter("completed")}
-            sx={{ mr: 1 }}
-          >
-            Completed
-          </Button>
-        </div>
-
-        <div style={{ marginTop: "20px" ,textAlign:"center"}}>
-          <Button onClick={() => setSort("newest")}>Newest</Button>
-          <Button onClick={() => setSort("oldest")}>Oldest</Button>
-          <Button onClick={() => setSort("nameASC")}>NameASC</Button>
-          <Button onClick={() => setSort("nameDSC")}>nameDSC</Button>
-        </div>
-
-        <div style={{ marginTop: "20px",textAlign:"center" }}>
-          <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
-            Prev
-          </Button>
-          <span style={{ margin: "0 10px" }}>
-            page {page} of {totalPages}
-          </span>
-          <Button
-            disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-          >
-            Next
-          </Button>
-        </div>
-        {!loading && error && (
-          <Typography
-            align="center"
-            color="error"
-            sx={{ mt: 4, fontSize: "22px" }}
-          >
-            ⚠️ {error}
+    <Box sx={{ backgroundColor: "rgb(255, 255, 255)", marginTop: "-5px" }}>
+      <PageWrapper>
+        <AnimatedPage>
+          <IconButton onClick={() => navigate(-1)}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h4" textAlign="center" gutterBottom>
+            My Bookings
           </Typography>
-        )}
-
-        {loading && (
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3,1fr)",
+              display: "flex",
               gap: "20px",
+              marginBottom: "25px",
+              flexWrap: "wrap",
+              // width:"20px",
+              margin: "10px",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            {[1, 2, 3, 4, 5, 6].map((i) => {
-              return skeletonCard();
-            })}
+            <Card
+              sx={{
+                p: 2,
+                minWidth: 150,
+                margin: "20px",
+                backgroundColor: "darkgray",
+                color: "green",
+              }}
+            >
+              <Typography>Total</Typography>
+              <Typography variant="h5">{totalCount}</Typography>
+            </Card>
+            <Card
+              sx={{
+                p: 2,
+                minWidth: 150,
+                margin: "20px",
+                backgroundColor: "darkgray",
+                color: "deeppink",
+                fontWeight: 700,
+              }}
+            >
+              <Typography>Pending</Typography>
+              <Typography variant="h5" color="orange">
+                {pendingCount}
+              </Typography>
+            </Card>
+            <Card
+              sx={{
+                p: 2,
+                minWidth: 150,
+                margin: "20px",
+                backgroundColor: "darkgray",
+                color: "bisque",
+                fontWeight: 700,
+              }}
+            >
+              <Typography>completed</Typography>
+              <Typography variant="h5" color="green">
+                {completedCount}
+              </Typography>
+            </Card>
           </div>
-        )}
-        {!loading &&
-          (paginatedBookings.length === 0 ? (
+          <div
+            style={{
+              display: "flex",
+              gap: "15px",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "25px",
+              flexWrap: "wrap",
+            }}
+          >
+            <input
+              type="text"
+              placeholder="search by name or phone"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                padding: "10px",
+                width: "300px",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+                outline: "none",
+              }}
+            />
+            <Button onClick={loadBookings} variant="contained">
+              Refresh
+            </Button>
+          </div>
+
+          <div style={{ marginBottom: "20px", textAlign: "center" }}>
+            <Button
+              variant={filter === "All" ? "contained" : "outlined"}
+              onClick={() => setFilter("All")}
+              sx={{ mr: 1 }}
+            >
+              All
+            </Button>
+            <Button
+              variant={filter === "Pending" ? "contained" : "outlined"}
+              onClick={() => setFilter("Pending")}
+              sx={{ mr: 1 }}
+            >
+              Pending
+            </Button>
+            <Button
+              variant={filter === "completed" ? "contained" : "outlined"}
+              onClick={() => setFilter("completed")}
+              sx={{ mr: 1 }}
+            >
+              Completed
+            </Button>
+          </div>
+
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
+            <Button onClick={() => setSort("newest")}>Newest</Button>
+            <Button onClick={() => setSort("oldest")}>Oldest</Button>
+            <Button onClick={() => setSort("nameASC")}>NameASC</Button>
+            <Button onClick={() => setSort("nameDSC")}>nameDSC</Button>
+          </div>
+
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
+            <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
+              Prev
+            </Button>
+            <span style={{ margin: "0 10px" }}>
+              page {page} of {totalPages}
+            </span>
+            <Button
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+            >
+              Next
+            </Button>
+          </div>
+          {!loading && error && (
             <Typography
               align="center"
-              sx={{ gridColumn: "1/-1", mt: 5, fontSize: "25px" }}
+              color="error"
+              sx={{ mt: 4, fontSize: "22px" }}
             >
-              No bookings found
+              ⚠️ {error}
             </Typography>
-          ) : (
+          )}
+
+          {loading && (
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(3,1fr)",
                 gap: "20px",
-                
               }}
             >
-              {paginatedBookings.map((b) => (
-                <Card
-                  key={b._id}
-                  sx={{
-                    mb: 2,
-                    p: 2,
-                    borderRadius: 3,
-                    backgroundColor: "#ffffff",
-                    border: "1px solid #e0e0e0",
-                    boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-                    transition: "0.3s",
-                    "&:hover": {
-                      boxShadow: "0 8px 18px rgba(0,0,0,0.15)",
-                      transform: "scale(1.01)",
-                    },
-                  }}
-                >
-                  <CardContent sx={{textAlign:"center"}}>
-                    {editId == b._id ? (
-                      <>
-                        <input
-                          value={editName}
-                          onChange={(e) => setEditName(e.target.value)}
-                          style={{
-                            padding: "8px",
-                            marginBottom: "8px",
-                            width: "100%",
-                          }}
-                        />
+              {[1, 2, 3, 4, 5, 6].map((i) => {
+                return skeletonCard();
+              })}
+            </div>
+          )}
+          {!loading &&
+            (paginatedBookings.length === 0 ? (
+              <Typography
+                align="center"
+                sx={{ gridColumn: "1/-1", mt: 5, fontSize: "25px" }}
+              >
+                No bookings found
+              </Typography>
+            ) : (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3,1fr)",
+                  gap: "20px",
+                }}
+              >
+                {paginatedBookings.map((b) => (
+                  <Card
+                    key={b._id}
+                    sx={{
+                      mb: 2,
+                      p: 2,
+                      borderRadius: 3,
+                      backgroundColor: "#ffffff",
+                      border: "1px solid #e0e0e0",
+                      boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
+                      transition: "0.3s",
+                      "&:hover": {
+                        boxShadow: "0 8px 18px rgba(0,0,0,0.15)",
+                        transform: "scale(1.01)",
+                      },
+                    }}
+                  >
+                    <CardContent sx={{ textAlign: "center" }}>
+                      {editId == b._id ? (
+                        <>
+                          <input
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            style={{
+                              padding: "8px",
+                              marginBottom: "8px",
+                              width: "100%",
+                            }}
+                          />
 
-                        <input
-                          value={editPhone}
-                          onChange={(e) => setEditPhone(e.target.value)}
-                          style={{ padding: "8px", width: "100%" }}
-                        />
-                        <div
-                          style={{
-                            display: "flex",
-                            gap: "10px",
-                            marginTop: "10px",
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => handleSave(b._id)}
+                          <input
+                            value={editPhone}
+                            onChange={(e) => setEditPhone(e.target.value)}
+                            style={{ padding: "8px", width: "100%" }}
+                          />
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "10px",
+                              marginTop: "10px",
+                            }}
                           >
-                            Save
-                          </Button>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleSave(b._id)}
+                            >
+                              Save
+                            </Button>
+
+                            <Button
+                              variant="outlined"
+                              color="secondary"
+                              onClick={handleCancel}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <Typography variant="h6">
+                            👤 <b>Name</b>: {b.userName}
+                          </Typography>
+
+                          <Typography variant="h6">
+                            📞 <b>Phone</b>: {b.Phone}
+                          </Typography>
+                          <Typography>
+                            📅 Date:{" "}
+                            {b.createdAt
+                              ? new Date(b.createdAt).toLocaleDateString()
+                              : "N/A"}
+                          </Typography>
+                          <Typography variant="h6" >
+                            🕒 Slot: {b.slot}
+                          </Typography>
+
+                          <Typography>
+                            ⏰ Time:{" "}
+                            {b.createdAt
+                              ? new Date(b.createdAt).toLocaleTimeString()
+                              : "N/A"}
+                          </Typography>
 
                           <Button
                             variant="outlined"
-                            color="secondary"
-                            onClick={handleCancel}
+                            onClick={() => handleEdit(b)}
+                            sx={{ mt: 1 }}
                           >
-                            Cancel
+                            Edit
                           </Button>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <Typography variant="h6">
-                          👤 <b>Name</b>: {b.userName}
-                        </Typography>
+                        </>
+                      )}
 
-                        <Typography variant="h6">
-                          📞 <b>Phone</b>: {b.Phone}
-                        </Typography>
-                        <Typography>
-                          📅 Date:{" "}
-                          {b.createdAt
-                            ? new Date(b.createdAt).toLocaleDateString()
-                            : "N/A"}
-                        </Typography>
-
-                        <Typography>
-                          ⏰ Time:{" "}
-                          {b.createdAt
-                            ? new Date(b.createdAt).toLocaleTimeString()
-                            : "N/A"}
-                        </Typography>
-
-                        <Button
-                          variant="outlined"
-                          onClick={() => handleEdit(b)}
-                          sx={{ mt: 1 }}
-                        >
-                          Edit
-                        </Button>
-                      </>
-                    )}
-
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        mt: 1,
-                        color: b.status === "completed" ? "green" : "orange",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      status: {b.status.toUpperCase() || "Pending"}
-                    </Typography>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "12px",
-                        marginTop: "20px",
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        color="success"
-                        startIcon={<CheckCircleIcon />}
+                      <Typography
+                        variant="subtitle2"
                         sx={{
-                          flex: 1,
-                          textTransform: "none",
+                          mt: 1,
+                          color: b.status === "completed" ? "green" : "orange",
                           fontWeight: "bold",
-                          borderRadius: "10px",
-                        }}
-                        onClick={() => handleComplete(b._id)}
-                      >
-                        Mark Completed
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        startIcon={<DeleteIcon />}
-                        onClick={() => {
-                          setDeleteId(b._id);
-                          setOpenDelete(true);
                         }}
                       >
-                        Delete
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ))}
+                        status: {b.status.toUpperCase() || "Pending"}
+                      </Typography>
 
-        <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
-          <DialogTitle>Confirm Delete</DialogTitle>
-          <DialogContent>
-            Are you sure you want to delete this booking?
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpenDelete(false)}>Cancel</Button>
-            <Button color="error" onClick={confirmDelete}>
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </AnimatedPage>
-    </PageWrapper>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "12px",
+                          marginTop: "20px",
+                        }}
+                      >
+                        <Button
+                          variant="contained"
+                          color="success"
+                          startIcon={<CheckCircleIcon />}
+                          sx={{
+                            flex: 1,
+                            textTransform: "none",
+                            fontWeight: "bold",
+                            borderRadius: "10px",
+                          }}
+                          onClick={() => handleComplete(b._id)}
+                        >
+                          Mark Completed
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          startIcon={<DeleteIcon />}
+                          onClick={() => {
+                            setDeleteId(b._id);
+                            setOpenDelete(true);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ))}
+
+          <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
+            <DialogTitle>Confirm Delete</DialogTitle>
+            <DialogContent>
+              Are you sure you want to delete this booking?
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setOpenDelete(false)}>Cancel</Button>
+              <Button color="error" onClick={confirmDelete}>
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </AnimatedPage>
+      </PageWrapper>
     </Box>
-
   );
 };
 

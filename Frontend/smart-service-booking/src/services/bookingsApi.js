@@ -11,15 +11,11 @@ const getAuthConfig = () => {
 };
 
 export const createBooking = async (serviceTitle, userName, Phone,slot) => {
-  const token = localStorage.getItem("token");
   const response = await api.post(
     "/book",
-    // serviceTitle: serviceTitle,
-    // userName: userName,
-    // Phone: Phone,
     { serviceTitle, userName, Phone,slot },
-    getAuthConfig()
     
+    getAuthConfig(),
   );
   return response.data;
 };
@@ -47,6 +43,24 @@ export const updateBookingDetails = async (id, userName, Phone) => {
   const res = await api.put(
     `/bookings/edit/${id}`,
     { userName, Phone },
+    getAuthConfig(),
+  );
+  return res.data;
+};
+
+export const rescheduleBooking = async (id, slot, reason = "") => {
+  const res = await api.put(
+    `/bookings/${id}/reschedule`,
+    { slot, reason },
+    getAuthConfig(),
+  );
+  return res.data;
+};
+
+export const cancelBooking = async (id, reason = "") => {
+  const res = await api.put(
+    `/bookings/${id}/cancel`,
+    { reason },
     getAuthConfig(),
   );
   return res.data;

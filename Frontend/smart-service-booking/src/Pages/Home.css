@@ -9,3 +9,38 @@
     transform: translateY(0px);
   }
 }
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  animation-name: fadeSlideUp;
+  animation-duration: 0.8s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
+
+.delay-1 {
+  animation-delay: 0.08s;
+}
+
+.delay-2 {
+  animation-delay: 0.18s;
+}
+
+.delay-3 {
+  animation-delay: 0.28s;
+}
+
+.delay-4 {
+  animation-delay: 0.38s;
+}

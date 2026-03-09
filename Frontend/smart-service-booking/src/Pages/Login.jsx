@@ -24,7 +24,7 @@ const Login = () => {
       const res = await loginUser(email, password);
 
       localStorage.setItem("token", res.token);
-      localStorage.setItem("role", res.role);
+      localStorage.setItem("role", (res.role || "").toString().trim().toLowerCase());
 
       alert("Login Successful");
       navigate("/services");

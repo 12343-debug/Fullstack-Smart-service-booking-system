@@ -3,36 +3,64 @@ import { useNavigate } from "react-router-dom";
 
 const AdminNavbar = () => {
   const navigate = useNavigate();
+  const navButtonSx = {
+    fontWeight: 700,
+    textTransform: "none",
+    borderRadius: 2,
+    px: 1.5,
+    color: "#0f172a",
+    "&:hover": {
+      color: "#ffffff",
+      backgroundColor: "#0f172a",
+    },
+  };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "black" }}>
-      <Toolbar sx={{ display: "flex", justifyContent: "center", gap: 3 }}>
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{
+        backgroundColor: "rgba(255,255,255,0.9)",
+        border: "1px solid #d7dee8",
+        borderRadius: 2.5,
+        color: "#0f172a",
+      }}
+    >
+      <Toolbar
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: { xs: 1, md: 2 },
+          flexWrap: "wrap",
+          py: 0.5,
+        }}
+      >
         <Button
-          color="rgb(15,23,42)"
-          sx={{ fontWeight: 700 }}
+          color="inherit"
+          sx={navButtonSx}
           onClick={() => navigate("/admin")}
         >
           Dashboard
         </Button>
 
         <Button
-          color="rgb(15,23,42)"
-          sx={{ fontWeight: 700 }}
+          color="inherit"
+          sx={navButtonSx}
           onClick={() => navigate("/admin/add-service")}
         >
           Add Service
         </Button>
 
         <Button
-          color="rgb(15,23,42)"
-          sx={{ fontWeight: 700 }}
+          color="inherit"
+          sx={navButtonSx}
           onClick={() => navigate("/services")}
         >
           Available Services
         </Button>
         <Button
-         color="rgb(15,23,42)"
-          sx={{ fontWeight: 700 }}
+          color="inherit"
+          sx={navButtonSx}
           onClick={() => navigate("/admin/services")}
         >
           Manage Services

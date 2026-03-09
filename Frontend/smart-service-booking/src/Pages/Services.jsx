@@ -3,8 +3,9 @@ import {
   Button,
   Card,
   CardContent,
-  Container,
   Grid,
+  MenuItem,
+  TextField,
   Typography,
 } from "@mui/material";
 
@@ -114,82 +115,152 @@ const Services = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "#d9d9d9",
         minHeight: "100vh",
-        p: 2,
-        marginTop: "auto",
+        background:
+          "linear-gradient(140deg, #f4f7fb 0%, #eef3f8 55%, #e8eef5 100%)",
       }}
     >
-      <PageWrapper>
+      <PageWrapper
+        sx={{
+          pt: 6,
+          "& .MuiContainer-root": {
+            maxWidth: "100% !important",
+            px: { xs: 2, md: 4 },
+          },
+        }}
+      >
         <AnimatedPage>
-          <IconButton onClick={() => navigate(-1)}>
+          <IconButton
+            onClick={() => navigate(-1)}
+            sx={{
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+              mb: 1,
+              "&:hover": { backgroundColor: "#ffffff" },
+            }}
+          >
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h4" textAlign="center" gutterBottom>
+          <Typography
+            variant="h4"
+            textAlign="center"
+            gutterBottom
+            sx={{ color: "#0f172a", fontWeight: 700 }}
+          >
             Available services
           </Typography>
-          <div style={{ textAlign: "center" }}>
-            <input
-              style={{ padding: "8px", margin: "17px", border: "revert" }}
-              placeholder="Your name"
+          <Box
+            sx={{
+              p: { xs: 2, sm: 3 },
+              borderRadius: 3,
+              border: "1px solid #d7dee8",
+              backgroundColor: "rgba(255, 255, 255, 0.82)",
+              backdropFilter: "blur(6px)",
+              boxShadow: "0 12px 35px rgba(15, 23, 42, 0.08)",
+              mb: 4,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 2,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TextField
+                size="small"
+                label="Your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-            />
-            <select
-              value={selectedSlot}
-              onChange={(e) => setSelectedSlot(e.target.value)}
-            >
-              <option value="">Select Slot</option>
-
-              {slots.map((slot) => (
-                <option key={slot} value={slot}>
-                  {slot}
-                </option>
-              ))}
-            </select>
-
-            <input
-              style={{ padding: "8px", marginLeft: "15px", border: "revert" }}
-              placeholder="Phone number"
-              value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value);
-                setError("");
-              }}
-            />
-            <Button
-              onClick={sendOTP}
-              sx={{ margin: "0px", border: "none", color: "green" }}
-            >
-              Send OTP
-            </Button>
-            {otpSent && (
-              <>
-                <input
-                  style={{ border: "none", padding: "9px" }}
-                  placeholder="Enter OTP"
+                sx={{ minWidth: { xs: "100%", sm: 220 } }}
+              />
+              <TextField
+                select
+                size="small"
+                label="Select slot"
+                value={selectedSlot}
+                onChange={(e) => setSelectedSlot(e.target.value)}
+                sx={{ minWidth: { xs: "100%", sm: 180 } }}
+              >
+                <MenuItem value="">Select Slot</MenuItem>
+                {slots.map((slot) => (
+                  <MenuItem key={slot} value={slot}>
+                    {slot}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                size="small"
+                label="Phone number"
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  setError("");
+                }}
+                sx={{ minWidth: { xs: "100%", sm: 220 } }}
+              />
+              <Button
+                onClick={sendOTP}
+                variant="outlined"
+                sx={{
+                  height: 40,
+                  borderColor: "#1e3a8a",
+                  color: "#1e3a8a",
+                  fontWeight: 600,
+                  "&:hover": { borderColor: "#1e3a8a", backgroundColor: "#eff6ff" },
+                }}
+              >
+                Send OTP
+              </Button>
+              {otpSent && (
+                <TextField
+                  size="small"
+                  label="Enter OTP"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
+                  sx={{ minWidth: { xs: "100%", sm: 160 } }}
                 />
-
+              )}
+              {otpSent && (
                 <Button
                   onClick={verifyOTP}
-                  sx={{ border: "none", margin: "23px", padding: "3px" }}
+                  variant="contained"
+                  sx={{
+                    height: 40,
+                    fontWeight: 700,
+                    backgroundColor: "#0f172a",
+                    "&:hover": { backgroundColor: "#020617" },
+                  }}
                 >
                   Verify OTP
                 </Button>
-              </>
-            )}
+              )}
+            </Box>
+
             {error && (
-              <Typography style={{ color: "red", marginBottom: "15px", mt: 1 }}>
+              <Typography sx={{ color: "#c62828", mt: 1.5, textAlign: "center" }}>
                 {error}
               </Typography>
             )}
-          </div>
+          </Box>
           <Grid container spacing={3} sx={{ justifyContent: "center" }}>
             {services.map((service) => (
               <Grid item xs={12} md={4} key={service._id}>
-                <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+                <Card
+                  sx={{
+                    borderRadius: 3,
+                    boxShadow: "0 12px 25px rgba(15, 23, 42, 0.10)",
+                    border: "1px solid #d7dee8",
+                    height: "100%",
+                    backgroundColor: "#ffffff",
+                    transition: "all 0.25s ease",
+                    "&:hover": {
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 16px 30px rgba(15, 23, 42, 0.14)",
+                    },
+                  }}
+                >
                   <img
                     src={service.image}
                     alt={service.title}
@@ -197,20 +268,26 @@ const Services = () => {
                       width: "100%",
                       height: "130px",
                       objectFit: "contain",
-                      padding: "10px",
+                      padding: "14px",
                       textAlign: "center",
                     }}
                   />
 
                   <CardContent>
-                    <Typography variant="h6">
+                    <Typography variant="h6" sx={{ color: "#18314b", fontWeight: 600 }}>
                       {service.icon} {service.title}
                     </Typography>
 
                     <Button
                       variant="contained"
                       fullWidth
-                      sx={{ mt: 2 }}
+                      sx={{
+                        mt: 2,
+                        fontWeight: 700,
+                        textTransform: "none",
+                        backgroundColor: "#0f172a",
+                        "&:hover": { backgroundColor: "#020617" },
+                      }}
                       onClick={() => handleBook(service.title)}
                     >
                       Book Now

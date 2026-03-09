@@ -1,36 +1,59 @@
 require("dotenv").config();
-console.log("JWT FROM ENV =", process.env.JWT_SECRET);
-console.log("MONGO FROM ENV =", process.env.MONGO_URI);
-
-console.log("🔥 INDEX.JS LOADED 🔥");
 
 const express = require("express");
 const cors = require("cors");
-const User = require("./models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
+const connectDB = require("./db");
+const User = require("./models/User");
+const Service = require("./models/Service");
+const Booking = require("./models/Booking");
 const authMiddleware = require("./middler/authMiddleware");
 const adminMiddleware = require("./middler/adminMiddleware");
-// const sendEmail = require("./sendEmail");
 
 const app = express();
 const otpStore = {};
 
+const STATUS_VALUES = [
+  "pending",
+  "confirmed",
+  "in_progress",
+  "completed",
+  "cancelled",
+];
+
+const ALL_SLOTS = [
+  "10:00 AM",
+  "11:00 AM",
+  "12:00 PM",
+  "1:00 PM",
+  "2:00 PM",
+  "3:00 PM",
+  "4:00 PM",
+  "5:00 PM",
+];
+
 app.use(cors());
 app.use(express.json());
 
-const connectDB = require("./db");
 connectDB();
 
-const Service = require("./models/Service");
-const Booking = require("./models/Booking");
+const canModifyBooking = (booking, req) => {
+  if (!booking) return false;
+  if (req.userRole === "admin") return true;
+  return booking.userId?.toString() === req.userId;
+};
 
-// authentication
+app.get("/", (_req, res) => {
+  res.send("Backend is running");
+});
+
+// Authentication
 app.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // 1. Validation
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields required" });
     }
@@ -39,116 +62,98 @@ app.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Password must be 6 characters" });
     }
 
-    // 2. Check existing user
     const existUser = await User.findOne({ email });
     if (existUser) {
       return res.status(400).json({ message: "Email already registered" });
     }
-    const hashed = await bcrypt.hash(password, 10);
 
-    const user = new User({
-      name,
-      email,
-      password: hashed,
-    });
+    const hashed = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashed });
     await user.save();
-//     await sendEmail(
-//   email,
-//   "Welcome to Smart Service Booking",
-//   `Hi ${name},\n\nThank you for registering with Smart Service Booking System.\nWe are happy to have you!\n\n- Team Smart Service`
-// );
-    res.send("user registered");
+
+    return res.send("user registered");
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
-// login api email,password
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1. Validation
     if (!email || !password) {
       return res.status(400).json({ message: "All fields required" });
     }
 
-    // 2. Find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
-      console.log("USER:", user);
     }
 
-    // 3. Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    console.log("JWT SECRET:", process.env.JWT_SECRET);
 
-    // 4. Create token
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({ message: "JWT secret missing" });
     }
 
     const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-      },
+      { id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1d" },
     );
 
-    res.json({
-      token,
-      role: user.role, // optional but useful
-    });
+    return res.json({ token, role: user.role });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
-app.get("/", (req, res) => {
-  
-  res.send("Backend is running");
-  
-});
-
-app.get("/services", async (req, res) => {
+// Services
+app.get("/services", async (_req, res) => {
   const data = await Service.find();
   res.json(data);
 });
 
 app.post("/add-service", async (req, res) => {
   const { title, icon, image } = req.body;
-  const service = new Service({
-    title,
-    icon,
-    image,
-  });
+  const service = new Service({ title, icon, image });
   await service.save();
   res.send("services added");
-  // const serviceData = new Service({
-  //     title:req.body.title,
-  // });
-
-  // await serviceData.save();
-  // res.send("data added");
 });
 
-// adding bookings
-app.post("/book", authMiddleware, async (req, res) => {
+app.delete("/services/:id", authMiddleware, adminMiddleware, async (req, res) => {
+  await Service.findByIdAndDelete(req.params.id);
+  res.json({ message: "Service deleted successfully" });
+});
 
-  const { serviceTitle, userName, Phone ,slot} = req.body;
+// Bookings
+app.post("/book", authMiddleware, async (req, res) => {
+  const { serviceTitle, userName, Phone, slot } = req.body;
 
   const phoneRegex = /^[6-9]\d{9}$/;
+  if (!phoneRegex.test(Phone)) {
+    return res.status(400).json({ message: "Invalid phone number" });
+  }
 
-  if(!phoneRegex.test(Phone)){
-    return res.status(400).json({message:"Invalid phone number"});
+  if (!slot) {
+    return res.status(400).json({ message: "Slot is required" });
+  }
+
+  if (!ALL_SLOTS.includes(slot)) {
+    return res.status(400).json({ message: "Invalid slot selected" });
+  }
+
+  const activeSlotBooking = await Booking.findOne({
+    slot,
+    status: { $in: ["pending", "confirmed", "in_progress"] },
+  });
+  if (activeSlotBooking) {
+    return res.status(409).json({ message: "Slot already booked, choose another slot" });
   }
 
   const booking = new Booking({
@@ -156,35 +161,65 @@ app.post("/book", authMiddleware, async (req, res) => {
     userName,
     Phone,
     slot,
-    userId:req.userId
+    userId: req.userId,
+    status: "pending",
   });
 
   await booking.save();
-
-  res.send("Booking saved");
-
+  return res.send("Booking saved");
 });
-// book api(getting bookings)
+
 app.get("/bookings", authMiddleware, async (req, res) => {
   const data = await Booking.find({ userId: req.userId });
   res.json(data);
 });
 
-// delete bookings api
 app.delete("/bookings/:id", authMiddleware, async (req, res) => {
+  const booking = await Booking.findById(req.params.id);
+  if (!booking) {
+    return res.status(404).json({ message: "Booking not found" });
+  }
+  if (!canModifyBooking(booking, req)) {
+    return res.status(403).json({ message: "Not allowed to delete this booking" });
+  }
+
   await Booking.findByIdAndDelete(req.params.id);
   res.send("Bookings Deleted");
 });
 
 app.put("/bookings/:id", authMiddleware, async (req, res) => {
-  await Booking.findByIdAndUpdate(req.params.id, { status: req.body.status });
+  const status = String(req.body.status || "").toLowerCase();
+
+  if (!STATUS_VALUES.includes(status)) {
+    return res.status(400).json({
+      message: "Invalid status value",
+      allowed: STATUS_VALUES,
+    });
+  }
+
+  const booking = await Booking.findById(req.params.id);
+  if (!booking) {
+    return res.status(404).json({ message: "Booking not found" });
+  }
+  if (!canModifyBooking(booking, req)) {
+    return res.status(403).json({ message: "Not allowed to update this booking" });
+  }
+
+  await Booking.findByIdAndUpdate(req.params.id, { status });
   res.send("Booking Updated");
 });
 
-// edit name and phone number
-app.put("/bookings/edit/:id", async (req, res) => {
+app.put("/bookings/edit/:id", authMiddleware, async (req, res) => {
   try {
     const { userName, Phone } = req.body;
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    if (!canModifyBooking(booking, req)) {
+      return res.status(403).json({ message: "Not allowed to edit this booking" });
+    }
 
     await Booking.findByIdAndUpdate(req.params.id, {
       userName,
@@ -198,45 +233,90 @@ app.put("/bookings/edit/:id", async (req, res) => {
   }
 });
 
-app.get(
-  "/admin/bookings",
-  authMiddleware,
-  adminMiddleware,
-  async (req, res) => {
-    if (req.userRole !== "admin") {
-      return res.status(403).json({ message: "Access denied" });
+app.put("/bookings/:id/reschedule", authMiddleware, async (req, res) => {
+  try {
+    const { slot, reason } = req.body;
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    if (!canModifyBooking(booking, req)) {
+      return res.status(403).json({ message: "Not allowed to reschedule this booking" });
+    }
+    if (!slot || !ALL_SLOTS.includes(slot)) {
+      return res.status(400).json({ message: "Valid slot is required" });
+    }
+    if (["completed", "cancelled"].includes(booking.status)) {
+      return res.status(400).json({ message: "Completed/Cancelled booking cannot be rescheduled" });
     }
 
-    const bookings = await Booking.find().populate("userId", "email");
-    res.json(bookings);
-  },
-);
+    const activeSlotBooking = await Booking.findOne({
+      _id: { $ne: booking._id },
+      slot,
+      status: { $in: ["pending", "confirmed", "in_progress"] },
+    });
+    if (activeSlotBooking) {
+      return res.status(409).json({ message: "Slot already booked, choose another slot" });
+    }
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+    booking.rescheduledFrom = booking.slot;
+    booking.slot = slot;
+    booking.status = "confirmed";
+    booking.rescheduleReason = reason || "";
+    await booking.save();
 
-
-app.delete("/services/:id", authMiddleware, adminMiddleware, async (req, res) => {
-  await Service.findByIdAndDelete(req.params.id);
-  res.json({ message: "Service deleted successfully" });
+    return res.json({ message: "Booking rescheduled", booking });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Reschedule failed" });
+  }
 });
 
+app.put("/bookings/:id/cancel", authMiddleware, async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const booking = await Booking.findById(req.params.id);
 
-// otp verification
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    if (!canModifyBooking(booking, req)) {
+      return res.status(403).json({ message: "Not allowed to cancel this booking" });
+    }
+    if (booking.status === "completed") {
+      return res.status(400).json({ message: "Completed booking cannot be cancelled" });
+    }
+
+    booking.status = "cancelled";
+    booking.cancelReason = reason || "Cancelled by user";
+    booking.cancelledBy = req.userRole === "admin" ? "admin" : "user";
+    await booking.save();
+
+    return res.json({ message: "Booking cancelled", booking });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Cancel failed" });
+  }
+});
+
+app.get("/admin/bookings", authMiddleware, adminMiddleware, async (req, res) => {
+  const bookings = await Booking.find().populate("userId", "email");
+  res.json(bookings);
+});
+
+// OTP
 app.post("/send-otp", (req, res) => {
   const { phone } = req.body;
-
   const otp = Math.floor(100000 + Math.random() * 900000);
 
   otpStore[phone] = otp;
-
-  console.log("OTP for", phone, ":", otp); // simulate SMS
+  console.log("OTP for", phone, ":", otp);
 
   res.json({ message: "OTP sent successfully" });
 });
 
-// verifying otp
 app.post("/verify-otp", (req, res) => {
-
   const { phone, otp } = req.body;
 
   if (otpStore[phone] == otp) {
@@ -244,35 +324,22 @@ app.post("/verify-otp", (req, res) => {
     return res.json({ verified: true });
   }
 
-  res.status(400).json({ message: "Invalid OTP" });
-
+  return res.status(400).json({ message: "Invalid OTP" });
 });
 
-// booking slots api
-app.get("/available-slots", async (req,res)=>{
+// Slots
+app.get("/available-slots", async (_req, res) => {
+  const bookings = await Booking.find({
+    status: { $in: ["pending", "confirmed", "in_progress"] },
+  });
 
-const allSlots = [
-"10:00 AM",
-"11:00 AM",
-"12:00 PM",
-"1:00 PM",
-"2:00 PM",
-"3:00 PM",
-"4:00 PM",
-"5:00 PM"
-];
+  const bookedSlots = bookings.map((b) => b.slot);
+  const availableSlots = ALL_SLOTS.filter((slot) => !bookedSlots.includes(slot));
 
-const bookings = await Booking.find();
-
-const bookedSlots = bookings.map(b => b.slot);
-
-const availableSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
-
-res.json(availableSlots);
-
+  res.json(availableSlots);
 });
 
-
-app.listen(5000, () => {
-  console.log("server running on port 5000");
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

@@ -5,11 +5,36 @@ const bookingSchema = new mongoose.Schema(
     serviceTitle: String,
     userName: String,
     Phone: String,
+    location: {
+      address: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      notes: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      latitude: {
+        type: Number,
+        default: null,
+      },
+      longitude: {
+        type: Number,
+        default: null,
+      },
+    },
 
     slot:{
     type:String,
     required:true
   },
+    bookingDate: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
     userId:{
       type:mongoose.Schema.Types.ObjectId,

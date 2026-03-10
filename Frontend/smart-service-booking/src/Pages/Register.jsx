@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
-  Container,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import AnimatedPage from "../components/AnimatedPage";
 import PageWrapper from "../components/PageWrapper";
+import BackButton from "../components/BackButton";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -41,8 +41,14 @@ const Register = () => {
   setPasswordError("");
     try {
       await registerUser(name, email, password);
-      alert("Registered Successfully");
-      navigate("/login");
+      navigate("/auth-success", {
+        state: {
+          title: "Registration Successful",
+          message: "Your account has been created successfully. You can now continue to login.",
+          buttonLabel: "Go To Login",
+          redirectTo: "/login",
+        },
+      });
     } catch (error) {
       alert("Registration Failed");
     }
@@ -51,6 +57,7 @@ const Register = () => {
   return (
     <PageWrapper>
       <AnimatedPage>
+        <BackButton />
         <Box
           sx={{
             minHeight: "100vh",

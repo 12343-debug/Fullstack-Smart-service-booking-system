@@ -2,23 +2,22 @@ import { useState } from "react";
 import { Button, Card, CardContent, TextField, Typography } from "@mui/material";
 import PageWrapper from "../../components/PageWrapper";
 import AnimatedPage from "../../components/AnimatedPage";
+import BackButton from "../../components/BackButton";
 import api from "../../services/api";
-import { useNavigate } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { IconButton } from "@mui/material";
 
 
 const AddService = () => {
   const [title, setTitle] = useState("");
   const [icon, setIcon] = useState("");
   const [image, setImage] = useState("");
-  const navigate = useNavigate();
+  const [price, setPrice] = useState("");
+  const [estimatedDuration, setEstimatedDuration] = useState("");
 
   const handleAddService = async () => {
     
     await api.post(
       "/add-service",
-      { title, icon, image },
+      { title, icon, image, price, estimatedDuration },
       {
         headers: {
           Authorization: localStorage.getItem("token"),
@@ -29,18 +28,15 @@ const AddService = () => {
     setTitle("");
     setIcon("");
     setImage("");
+    setPrice("");
+    setEstimatedDuration("");
     alert("Service added successfully");
   };
 
   return (
     <PageWrapper>
       <AnimatedPage>
-        <IconButton
-  onClick={() => navigate("/admin/services")}
-  sx={{ mb: 2 }}
->
-  <ArrowBackIcon />
-</IconButton>
+        <BackButton sx={{ mb: 2 }} />
         <Card sx={{ maxWidth: 500, mx: "auto" }}>
           <CardContent>
             <Typography variant="h5" gutterBottom>
@@ -69,6 +65,22 @@ const AddService = () => {
               margin="normal"
               value={image}
               onChange={(e) => setImage(e.target.value)}
+            />
+            <TextField
+              label="Price"
+              type="number"
+              fullWidth
+              margin="normal"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+            <TextField
+              label="Estimated Duration"
+              fullWidth
+              margin="normal"
+              value={estimatedDuration}
+              onChange={(e) => setEstimatedDuration(e.target.value)}
+              placeholder="Example: 45 mins"
             />
 
             <Button

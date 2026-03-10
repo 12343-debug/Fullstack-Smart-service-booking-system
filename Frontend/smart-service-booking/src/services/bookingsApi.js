@@ -10,10 +10,10 @@ const getAuthConfig = () => {
   };
 };
 
-export const createBooking = async (serviceTitle, userName, Phone,slot) => {
+export const createBooking = async (serviceTitle, userName, Phone, bookingDate, slot, location) => {
   const response = await api.post(
     "/book",
-    { serviceTitle, userName, Phone,slot },
+    { serviceTitle, userName, Phone, bookingDate, slot, location },
     
     getAuthConfig(),
   );
@@ -39,19 +39,19 @@ export const updateBookingStatus = async (id, status) => {
 };
 
 // edit
-export const updateBookingDetails = async (id, userName, Phone) => {
+export const updateBookingDetails = async (id, userName, Phone, location) => {
   const res = await api.put(
     `/bookings/edit/${id}`,
-    { userName, Phone },
+    { userName, Phone, location },
     getAuthConfig(),
   );
   return res.data;
 };
 
-export const rescheduleBooking = async (id, slot, reason = "") => {
+export const rescheduleBooking = async (id, bookingDate, slot, reason = "") => {
   const res = await api.put(
     `/bookings/${id}/reschedule`,
-    { slot, reason },
+    { bookingDate, slot, reason },
     getAuthConfig(),
   );
   return res.data;

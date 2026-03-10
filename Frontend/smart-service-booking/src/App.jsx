@@ -6,6 +6,7 @@ import Services from "./Pages/Services.jsx";
 import Bookings from "./Pages/Bookings.jsx";
 import Register from "./Pages/Register.jsx";
 import Login from "./Pages/Login.jsx";
+import AuthSuccess from "./Pages/AuthSuccess.jsx";
 import AdminRoute from "./components/routes/AdminRoute.jsx";
 import AdminDashboard from "./Pages/admin/AdminDashboard.jsx";
 import AddService from "./Pages/admin/AddService.jsx";
@@ -21,6 +22,7 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/auth-success" element={<AuthSuccess />} />
 
         <Route path="/services" element={<Services />} />
         <Route path="/bookings" element={<Bookings />} />

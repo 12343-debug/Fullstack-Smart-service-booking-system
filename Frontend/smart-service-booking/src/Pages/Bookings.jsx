@@ -25,14 +25,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import toast from "react-hot-toast";
 import { Skeleton } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { IconButton } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import AnimatedPage from "../components/AnimatedPage";
 import PageWrapper from "../components/PageWrapper";
+import BackButton from "../components/BackButton";
+import MapPreviewCard from "../components/MapPreviewCard";
+import DirectionsButton from "../components/DirectionsButton";
 import api from "../services/api";
+import { buildMapsUrl, formatCoordinates } from "../utils/location";
 
 const Bookings = () => {
+  const today = new Date().toISOString().split("T")[0];
   const [bookings, setBookings] = useState([]);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
@@ -42,12 +44,15 @@ const Bookings = () => {
   const [editId, setEditId] = useState(null);
   const [editName, setEditName] = useState("");
   const [editPhone, setEditPhone] = useState("");
+  const [editAddress, setEditAddress] = useState("");
+  const [editLocationNote, setEditLocationNote] = useState("");
   // popup
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
   const [openReschedule, setOpenReschedule] = useState(false);
   const [rescheduleId, setRescheduleId] = useState(null);
+  const [rescheduleDate, setRescheduleDate] = useState(today);
   const [rescheduleSlot, setRescheduleSlot] = useState("");
   const [rescheduleReason, setRescheduleReason] = useState("");
   const [slots, setSlots] = useState([]);
@@ -57,7 +62,6 @@ const Bookings = () => {
   const [error, setError] = useState("");
 
   const itemsPerPage = 6;
-  const navigate = useNavigate();
   const statusOptions = ["pending", "confirmed", "in_progress", "completed", "cancelled"];
   const statusFlow = ["pending", "confirmed", "in_progress", "completed"];
   const formatStatusLabel = (status) =>
@@ -96,9 +100,11 @@ const Bookings = () => {
     }
   };
 
-  const loadSlots = async () => {
+  const loadSlots = async (bookingDate = today) => {
     try {
-      const res = await api.get("/available-slots");
+      const res = await api.get("/available-slots", {
+        params: { date: bookingDate },
+      });
       setSlots(res.data || []);
     } catch (err) {
       console.log(err);
@@ -159,11 +165,16 @@ const Bookings = () => {
     setEditId(b._id);
     setEditName(b.userName);
     setEditPhone(b.Phone);
+    setEditAddress(b.location?.address || "");
+    setEditLocationNote(b.location?.notes || "");
   };
   // save
   const handleSave = async (id) => {
     try {
-      await updateBookingDetails(id, editName, editPhone);
+      await updateBookingDetails(id, editName, editPhone, {
+        address: editAddress,
+        notes: editLocationNote,
+      });
       toast.success("Bookings Updated");
       setEditId(null);
       loadBookings();
@@ -193,18 +204,23 @@ const Bookings = () => {
 
   const confirmReschedule = async () => {
     try {
+      if (!rescheduleDate) {
+        toast.error("Please select a date");
+        return;
+      }
       if (!rescheduleSlot) {
         toast.error("Please select a slot");
         return;
       }
-      await rescheduleBooking(rescheduleId, rescheduleSlot, rescheduleReason);
+      await rescheduleBooking(rescheduleId, rescheduleDate, rescheduleSlot, rescheduleReason);
       toast.success("Booking rescheduled successfully");
       setOpenReschedule(false);
       setRescheduleId(null);
+      setRescheduleDate(today);
       setRescheduleSlot("");
       setRescheduleReason("");
       loadBookings();
-      loadSlots();
+      loadSlots(today);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to reschedule booking");
     }
@@ -240,16 +256,7 @@ const Bookings = () => {
         }}
       >
         <AnimatedPage>
-          <IconButton
-            onClick={() => navigate(-1)}
-            sx={{
-              backgroundColor: "rgba(255,255,255,0.85)",
-              mb: 1,
-              "&:hover": { backgroundColor: "#fff" },
-            }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
+          <BackButton sx={{ backgroundColor: "rgba(255,255,255,0.85)" }} />
           <Typography
             variant="h4"
             textAlign="center"
@@ -513,6 +520,22 @@ const Bookings = () => {
                             label="Phone"
                             value={editPhone}
                             onChange={(e) => setEditPhone(e.target.value)}
+                            sx={{ mb: 1 }}
+                          />
+                          <TextField
+                            size="small"
+                            fullWidth
+                            label="House address"
+                            value={editAddress}
+                            onChange={(e) => setEditAddress(e.target.value)}
+                            sx={{ mb: 1 }}
+                          />
+                          <TextField
+                            size="small"
+                            fullWidth
+                            label="Location note"
+                            value={editLocationNote}
+                            onChange={(e) => setEditLocationNote(e.target.value)}
                           />
                           <Box
                             sx={{
@@ -560,8 +583,8 @@ const Bookings = () => {
                             sx={{ color: "#475569", mb: 0.6, fontSize: 15 }}
                           >
                             📅 Date:{" "}
-                            {b.createdAt
-                              ? new Date(b.createdAt).toLocaleDateString()
+                            {b.bookingDate
+                              ? new Date(`${b.bookingDate}T00:00:00`).toLocaleDateString()
                               : "N/A"}
                           </Typography>
                           <Typography
@@ -570,6 +593,28 @@ const Bookings = () => {
                           >
                             🕒 Slot: {b.slot}
                           </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "#475569", mb: 0.6, fontSize: 15 }}
+                          >
+                            📍 Address: {b.location?.address || "Not provided"}
+                          </Typography>
+                          {b.location?.notes ? (
+                            <Typography
+                              variant="body2"
+                              sx={{ color: "#475569", mb: 0.6, fontSize: 15 }}
+                            >
+                              🧭 Note: {b.location.notes}
+                            </Typography>
+                          ) : null}
+                          {formatCoordinates(b.location) ? (
+                            <Typography
+                              variant="body2"
+                              sx={{ color: "#475569", mb: 0.6, fontSize: 15 }}
+                            >
+                              🌐 Coordinates: {formatCoordinates(b.location)}
+                            </Typography>
+                          ) : null}
 
                           <Typography
                             variant="body2"
@@ -603,7 +648,7 @@ const Bookings = () => {
                               </Typography>
                               {b.rescheduledFrom && (
                                 <Typography variant="body2" sx={{ color: "#475569", mt: 0.5 }}>
-                                  Rescheduled: {b.rescheduledFrom} → {b.slot}
+                                  Rescheduled: {b.rescheduledFrom} → {b.bookingDate} {b.slot}
                                 </Typography>
                               )}
                               {b.rescheduleReason && (
@@ -631,6 +676,34 @@ const Bookings = () => {
                           >
                             Edit
                           </Button>
+                          {buildMapsUrl(b.location) ? (
+                            <Button
+                              variant="contained"
+                              href={buildMapsUrl(b.location)}
+                              target="_blank"
+                              rel="noreferrer"
+                              sx={{
+                                mt: 1,
+                                ml: 1,
+                                textTransform: "none",
+                                fontWeight: 600,
+                                backgroundColor: "#1d4ed8",
+                                "&:hover": { backgroundColor: "#1e40af" },
+                              }}
+                            >
+                              Open Map
+                            </Button>
+                          ) : null}
+                          <DirectionsButton
+                            destination={b.location}
+                            sx={{ mt: 1, ml: 1 }}
+                          />
+                          <MapPreviewCard
+                            title="Saved customer location"
+                            location={b.location}
+                            height={220}
+                            sx={{ maxWidth: 420 }}
+                          />
                         </>
                       )}
 
@@ -720,12 +793,14 @@ const Bookings = () => {
                             borderRadius: 2,
                           }}
                           disabled={getStatus(b.status) === "completed" || getStatus(b.status) === "cancelled"}
-                          onClick={() => {
-                            setRescheduleId(b._id);
-                            setRescheduleSlot("");
-                            setRescheduleReason("");
-                            setOpenReschedule(true);
-                          }}
+                              onClick={() => {
+                                setRescheduleId(b._id);
+                                setRescheduleDate(b.bookingDate || today);
+                                setRescheduleSlot("");
+                                setRescheduleReason("");
+                                loadSlots(b.bookingDate || today);
+                                setOpenReschedule(true);
+                              }}
                         >
                           Reschedule
                         </Button>
@@ -791,10 +866,25 @@ const Bookings = () => {
           <Dialog open={openReschedule} onClose={() => setOpenReschedule(false)} fullWidth maxWidth="xs">
             <DialogTitle>Reschedule Booking</DialogTitle>
             <DialogContent>
-              <TextField
-                select
-                fullWidth
-                size="small"
+            <TextField
+              fullWidth
+              size="small"
+              type="date"
+              label="Booking date"
+              value={rescheduleDate}
+              onChange={(e) => {
+                setRescheduleDate(e.target.value);
+                setRescheduleSlot("");
+                loadSlots(e.target.value);
+              }}
+              inputProps={{ min: today }}
+              InputLabelProps={{ shrink: true }}
+              sx={{ mt: 1 }}
+            />
+            <TextField
+              select
+              fullWidth
+              size="small"
                 label="Select slot"
                 value={rescheduleSlot}
                 onChange={(e) => setRescheduleSlot(e.target.value)}

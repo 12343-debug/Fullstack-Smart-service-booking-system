@@ -6,7 +6,6 @@ import {
   Button,
   Grid,
   Box,
-  IconButton,
   Dialog,
   DialogActions,
   DialogContent,
@@ -15,21 +14,86 @@ import {
   TextField,
 } from "@mui/material";
 import PageWrapper from "../../components/PageWrapper";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import api from "../../services/api";
 
 import AnimatedPage from "../../components/AnimatedPage";
+import BackButton from "../../components/BackButton";
+import MapPreviewCard from "../../components/MapPreviewCard";
+import DirectionsButton from "../../components/DirectionsButton";
 import { cancelBooking, updateBookingStatus } from "../../services/bookingsApi";
 import AdminNavbar from "./AdminNavBar";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom";
+import { buildMapsUrl, formatCoordinates } from "../../utils/location";
+
+const CALENDAR_SLOTS = [
+  "10:00 AM",
+  "11:00 AM",
+  "12:00 PM",
+  "1:00 PM",
+  "2:00 PM",
+  "3:00 PM",
+  "4:00 PM",
+  "5:00 PM",
+];
+
+const toDateInputValue = (value) => {
+  const source = value ? new Date(`${value}T00:00:00`) : new Date();
+  return new Date(source.getTime() - source.getTimezoneOffset() * 60000)
+    .toISOString()
+    .split("T")[0];
+};
+
+const getScheduleDate = (booking) =>
+  booking.bookingDate ||
+  (booking.createdAt ? new Date(booking.createdAt).toISOString().split("T")[0] : "");
+
+const formatScheduleDate = (value, options) =>
+  new Date(`${value}T00:00:00`).toLocaleDateString(undefined, options);
+
+const getWeekDates = (value) => {
+  const anchor = new Date(`${value}T00:00:00`);
+  const day = anchor.getDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  const start = new Date(anchor);
+  start.setDate(anchor.getDate() + mondayOffset);
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const current = new Date(start);
+    current.setDate(start.getDate() + index);
+    return toDateInputValue(current.toISOString().split("T")[0]);
+  });
+};
+
+const buildCalendarMap = (bookings) =>
+  bookings.reduce((acc, booking) => {
+    const scheduleDate = getScheduleDate(booking);
+    const slot = booking.slot || "";
+
+    if (!scheduleDate || !slot) {
+      return acc;
+    }
+
+    if (!acc[scheduleDate]) {
+      acc[scheduleDate] = {};
+    }
+
+    if (!acc[scheduleDate][slot]) {
+      acc[scheduleDate][slot] = [];
+    }
+
+    acc[scheduleDate][slot].push(booking);
+    return acc;
+  }, {});
 
 const AdminDashboard = () => {
+  const today = toDateInputValue();
   const [bookings, setBookings] = useState([]);
   const [error, setError] = useState("");
   const [openCancel, setOpenCancel] = useState(false);
   const [cancelId, setCancelId] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
+  const [calendarView, setCalendarView] = useState("week");
+  const [calendarDate, setCalendarDate] = useState(today);
   const totalBookings = bookings.length;
   const getStatus = (status) => (status || "pending").toLowerCase();
   const statusFlow = ["pending", "confirmed", "in_progress", "completed"];
@@ -42,13 +106,21 @@ const AdminDashboard = () => {
   const pendingBookings = bookings.filter(
     (b) => getStatus(b.status) === "pending",
   ).length;
-  const navigate = useNavigate();
   const inProgressBookings = bookings.filter(
     (b) => getStatus(b.status) === "in_progress",
   ).length;
   const completedBookings = bookings.filter(
     (b) => getStatus(b.status) === "completed",
   ).length;
+  const calendarDates =
+    calendarView === "day" ? [calendarDate] : getWeekDates(calendarDate);
+  const calendarDateSet = new Set(calendarDates);
+  const visibleCalendarBookings = bookings.filter((booking) =>
+    calendarDateSet.has(getScheduleDate(booking)),
+  );
+  const calendarMap = buildCalendarMap(visibleCalendarBookings);
+  const todayBookings = bookings.filter((booking) => getScheduleDate(booking) === today).length;
+  const selectedRangeBookings = visibleCalendarBookings.length;
 
   useEffect(() => {
     loadAllBookings();
@@ -120,16 +192,7 @@ const AdminDashboard = () => {
         },
       }}
     >
-        <IconButton
-          onClick={() => navigate(-1)}
-          sx={{
-            backgroundColor: "rgba(255,255,255,0.9)",
-            mb: 1,
-            "&:hover": { backgroundColor: "#fff" },
-          }}
-        >
-          <ArrowBackIcon />
-        </IconButton>
+        <BackButton />
       <AdminNavbar sx={{ mt: 7, marginTop: "10px" }} />
       
       <AnimatedPage>
@@ -225,6 +288,197 @@ const AdminDashboard = () => {
           </Card>
         </Box>
 
+        <Box
+          sx={{
+            mb: 3,
+            p: { xs: 2, md: 3 },
+            borderRadius: 3,
+            border: "1px solid #d7dee8",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            boxShadow: "0 12px 35px rgba(15, 23, 42, 0.08)",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: 2,
+              alignItems: { xs: "flex-start", md: "center" },
+              flexDirection: { xs: "column", md: "row" },
+              mb: 2.5,
+            }}
+          >
+            <Box>
+              <Typography sx={{ color: "#0f172a", fontWeight: 800, fontSize: 22 }}>
+                Schedule Calendar
+              </Typography>
+              <Typography sx={{ color: "#64748b", fontSize: 14, mt: 0.4 }}>
+                Track daily and weekly assignments by slot instead of scanning only cards.
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", gap: 1.2, flexWrap: "wrap" }}>
+              <Button
+                variant={calendarView === "day" ? "contained" : "outlined"}
+                onClick={() => setCalendarView("day")}
+                sx={{ textTransform: "none", fontWeight: 700, borderRadius: 2 }}
+              >
+                Day View
+              </Button>
+              <Button
+                variant={calendarView === "week" ? "contained" : "outlined"}
+                onClick={() => setCalendarView("week")}
+                sx={{ textTransform: "none", fontWeight: 700, borderRadius: 2 }}
+              >
+                Week View
+              </Button>
+              <TextField
+                size="small"
+                type="date"
+                label="Anchor date"
+                value={calendarDate}
+                onChange={(e) => setCalendarDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+              <Button
+                variant="outlined"
+                onClick={() => setCalendarDate(today)}
+                sx={{ textTransform: "none", fontWeight: 700, borderRadius: 2 }}
+              >
+                Today
+              </Button>
+            </Box>
+          </Box>
+
+          <Box
+            sx={{
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" },
+              mb: 2.5,
+            }}
+          >
+            <Card sx={{ borderRadius: 3, border: "1px solid #d7dee8", boxShadow: "none" }}>
+              <CardContent>
+                <Typography sx={{ color: "#64748b", fontSize: 14 }}>Scheduled Today</Typography>
+                <Typography variant="h4" sx={{ color: "#0f172a", fontWeight: 800 }}>
+                  {todayBookings}
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{ borderRadius: 3, border: "1px solid #d7dee8", boxShadow: "none" }}>
+              <CardContent>
+                <Typography sx={{ color: "#64748b", fontSize: 14 }}>
+                  {calendarView === "day" ? "Selected Day" : "Selected Week"}
+                </Typography>
+                <Typography variant="h4" sx={{ color: "#0f172a", fontWeight: 800 }}>
+                  {selectedRangeBookings}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+
+          <Box sx={{ overflowX: "auto", pb: 1 }}>
+            <Box
+              sx={{
+                minWidth: calendarView === "day" ? 420 : 1180,
+                display: "grid",
+                gridTemplateColumns:
+                  calendarView === "day" ? "110px minmax(260px, 1fr)" : "110px repeat(7, minmax(150px, 1fr))",
+                border: "1px solid #d7dee8",
+                borderRadius: 3,
+                overflow: "hidden",
+              }}
+            >
+              <Box sx={{ p: 1.5, bgcolor: "#e2e8f0", fontWeight: 800, color: "#0f172a" }}>
+                Time
+              </Box>
+              {calendarDates.map((date) => (
+                <Box
+                  key={date}
+                  sx={{
+                    p: 1.5,
+                    bgcolor: "#e2e8f0",
+                    borderLeft: "1px solid #cbd5e1",
+                  }}
+                >
+                  <Typography sx={{ color: "#0f172a", fontWeight: 800, fontSize: 14 }}>
+                    {formatScheduleDate(date, {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </Typography>
+                  <Typography sx={{ color: "#64748b", fontSize: 12 }}>{date}</Typography>
+                </Box>
+              ))}
+
+              {CALENDAR_SLOTS.map((slot) => (
+                <Fragment key={slot}>
+                  <Box
+                    sx={{
+                      p: 1.5,
+                      bgcolor: "#f8fafc",
+                      borderTop: "1px solid #e2e8f0",
+                      fontWeight: 700,
+                      color: "#334155",
+                    }}
+                  >
+                    {slot}
+                  </Box>
+                  {calendarDates.map((date) => {
+                    const cellBookings = calendarMap[date]?.[slot] || [];
+
+                    return (
+                      <Box
+                        key={`${date}-${slot}`}
+                        sx={{
+                          minHeight: 116,
+                          p: 1,
+                          borderTop: "1px solid #e2e8f0",
+                          borderLeft: "1px solid #e2e8f0",
+                          bgcolor: cellBookings.length ? "#ffffff" : "#f8fafc",
+                        }}
+                      >
+                        {cellBookings.length ? (
+                          cellBookings.map((booking) => (
+                            <Box
+                              key={booking._id}
+                              sx={{
+                                mb: 0.8,
+                                p: 1,
+                                borderRadius: 2,
+                                backgroundColor:
+                                  getStatus(booking.status) === "completed"
+                                    ? "#dcfce7"
+                                    : getStatus(booking.status) === "cancelled"
+                                      ? "#fee2e2"
+                                      : "#dbeafe",
+                                border: "1px solid rgba(15, 23, 42, 0.08)",
+                              }}
+                            >
+                              <Typography sx={{ color: "#0f172a", fontWeight: 700, fontSize: 13 }}>
+                                {booking.userName}
+                              </Typography>
+                              <Typography sx={{ color: "#475569", fontSize: 12.5 }}>
+                                {booking.serviceTitle}
+                              </Typography>
+                              <Typography sx={{ color: "#1e3a8a", fontSize: 11.5, fontWeight: 700 }}>
+                                {formatStatusLabel(getStatus(booking.status))}
+                              </Typography>
+                            </Box>
+                          ))
+                        ) : (
+                          <Typography sx={{ color: "#94a3b8", fontSize: 12 }}>No bookings</Typography>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </Fragment>
+              ))}
+            </Box>
+          </Box>
+        </Box>
+
         <Grid
           container
           spacing={2.5}
@@ -257,8 +511,47 @@ const AdminDashboard = () => {
                     🛠 Service: {b.serviceTitle}
                   </Typography>
                   <Typography sx={{ color: "#475569", mb: 0.5, fontSize: 14 }}>
+                    📅 Date: {getScheduleDate(b) ? formatScheduleDate(getScheduleDate(b), {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    }) : "N/A"}
+                  </Typography>
+                  <Typography sx={{ color: "#475569", mb: 0.5, fontSize: 14 }}>
                     🕒 Slot: {b.slot || "N/A"}
                   </Typography>
+                  <Typography sx={{ color: "#475569", mb: 0.5, fontSize: 14 }}>
+                    📍 Address: {b.location?.address || "Not provided"}
+                  </Typography>
+                  {b.location?.notes ? (
+                    <Typography sx={{ color: "#475569", mb: 0.5, fontSize: 14 }}>
+                      🧭 Note: {b.location.notes}
+                    </Typography>
+                  ) : null}
+                  {formatCoordinates(b.location) ? (
+                    <Typography sx={{ color: "#475569", mb: 0.5, fontSize: 14 }}>
+                      🌐 Coordinates: {formatCoordinates(b.location)}
+                    </Typography>
+                  ) : null}
+                  {buildMapsUrl(b.location) ? (
+                    <Button
+                      href={buildMapsUrl(b.location)}
+                      target="_blank"
+                      rel="noreferrer"
+                      sx={{ mt: 0.5, px: 0, textTransform: "none", fontWeight: 700 }}
+                    >
+                      Open map
+                    </Button>
+                  ) : null}
+                  <DirectionsButton
+                    destination={b.location}
+                    sx={{ mt: 0.75, ml: 1 }}
+                  />
+                  <MapPreviewCard
+                    title="Customer location"
+                    location={b.location}
+                    height={200}
+                  />
                   {(b.rescheduledFrom || b.rescheduleReason || b.cancelReason) && (
                     <Box
                       sx={{

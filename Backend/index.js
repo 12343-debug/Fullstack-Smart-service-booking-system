@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
 
 const express = require("express");
 const cors = require("cors");
@@ -34,6 +34,20 @@ const ALL_SLOTS = [
   "5:00 PM",
 ];
 
+const normalizeBookingDate = (value) => {
+  const raw = String(value || "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    return { error: "Valid booking date is required" };
+  }
+
+  const parsedDate = new Date(`${raw}T00:00:00`);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return { error: "Invalid booking date" };
+  }
+
+  return { value: raw };
+};
+
 app.use(cors());
 app.use(express.json());
 
@@ -43,6 +57,36 @@ const canModifyBooking = (booking, req) => {
   if (!booking) return false;
   if (req.userRole === "admin") return true;
   return booking.userId?.toString() === req.userId;
+};
+
+const normalizeLocation = (location = {}) => {
+  const address = String(location.address || "").trim();
+  const notes = String(location.notes || "").trim();
+  const latitude =
+    location.latitude === "" || location.latitude === null || location.latitude === undefined
+      ? null
+      : Number(location.latitude);
+  const longitude =
+    location.longitude === "" || location.longitude === null || location.longitude === undefined
+      ? null
+      : Number(location.longitude);
+
+  if (!address) {
+    return { error: "Service address is required" };
+  }
+
+  if ((latitude !== null && Number.isNaN(latitude)) || (longitude !== null && Number.isNaN(longitude))) {
+    return { error: "Invalid map coordinates" };
+  }
+
+  return {
+    value: {
+      address,
+      notes,
+      latitude,
+      longitude,
+    },
+  };
 };
 
 app.get("/", (_req, res) => {
@@ -120,8 +164,24 @@ app.get("/services", async (_req, res) => {
 });
 
 app.post("/add-service", async (req, res) => {
-  const { title, icon, image } = req.body;
-  const service = new Service({ title, icon, image });
+  const { title, icon, image, price, estimatedDuration } = req.body;
+
+  if (!title || !icon || !image || price === undefined || !estimatedDuration) {
+    return res.status(400).json({ message: "Title, icon, image, price and duration are required" });
+  }
+
+  const normalizedPrice = Number(price);
+  if (Number.isNaN(normalizedPrice) || normalizedPrice < 0) {
+    return res.status(400).json({ message: "Price must be a valid positive number" });
+  }
+
+  const service = new Service({
+    title: String(title).trim(),
+    icon: String(icon).trim(),
+    image: String(image).trim(),
+    price: normalizedPrice,
+    estimatedDuration: String(estimatedDuration).trim(),
+  });
   await service.save();
   res.send("services added");
 });
@@ -133,7 +193,7 @@ app.delete("/services/:id", authMiddleware, adminMiddleware, async (req, res) =>
 
 // Bookings
 app.post("/book", authMiddleware, async (req, res) => {
-  const { serviceTitle, userName, Phone, slot } = req.body;
+  const { serviceTitle, userName, Phone, slot, bookingDate, location } = req.body;
 
   const phoneRegex = /^[6-9]\d{9}$/;
   if (!phoneRegex.test(Phone)) {
@@ -148,7 +208,18 @@ app.post("/book", authMiddleware, async (req, res) => {
     return res.status(400).json({ message: "Invalid slot selected" });
   }
 
+  const normalizedBookingDate = normalizeBookingDate(bookingDate);
+  if (normalizedBookingDate.error) {
+    return res.status(400).json({ message: normalizedBookingDate.error });
+  }
+
+  const normalizedLocation = normalizeLocation(location);
+  if (normalizedLocation.error) {
+    return res.status(400).json({ message: normalizedLocation.error });
+  }
+
   const activeSlotBooking = await Booking.findOne({
+    bookingDate: normalizedBookingDate.value,
     slot,
     status: { $in: ["pending", "confirmed", "in_progress"] },
   });
@@ -161,6 +232,8 @@ app.post("/book", authMiddleware, async (req, res) => {
     userName,
     Phone,
     slot,
+    bookingDate: normalizedBookingDate.value,
+    location: normalizedLocation.value,
     userId: req.userId,
     status: "pending",
   });
@@ -211,7 +284,7 @@ app.put("/bookings/:id", authMiddleware, async (req, res) => {
 
 app.put("/bookings/edit/:id", authMiddleware, async (req, res) => {
   try {
-    const { userName, Phone } = req.body;
+    const { userName, Phone, location } = req.body;
     const booking = await Booking.findById(req.params.id);
 
     if (!booking) {
@@ -221,10 +294,23 @@ app.put("/bookings/edit/:id", authMiddleware, async (req, res) => {
       return res.status(403).json({ message: "Not allowed to edit this booking" });
     }
 
-    await Booking.findByIdAndUpdate(req.params.id, {
+    const updates = {
       userName,
       Phone,
-    });
+    };
+
+    if (location) {
+      const normalizedLocation = normalizeLocation(location);
+      if (normalizedLocation.error) {
+        return res.status(400).json({ message: normalizedLocation.error });
+      }
+      updates.location = {
+        ...booking.location?.toObject?.(),
+        ...normalizedLocation.value,
+      };
+    }
+
+    await Booking.findByIdAndUpdate(req.params.id, updates);
 
     res.send("Booking details updated");
   } catch (err) {
@@ -235,7 +321,7 @@ app.put("/bookings/edit/:id", authMiddleware, async (req, res) => {
 
 app.put("/bookings/:id/reschedule", authMiddleware, async (req, res) => {
   try {
-    const { slot, reason } = req.body;
+    const { slot, bookingDate, reason } = req.body;
     const booking = await Booking.findById(req.params.id);
 
     if (!booking) {
@@ -247,12 +333,19 @@ app.put("/bookings/:id/reschedule", authMiddleware, async (req, res) => {
     if (!slot || !ALL_SLOTS.includes(slot)) {
       return res.status(400).json({ message: "Valid slot is required" });
     }
+
+    const normalizedBookingDate = normalizeBookingDate(bookingDate || booking.bookingDate);
+    if (normalizedBookingDate.error) {
+      return res.status(400).json({ message: normalizedBookingDate.error });
+    }
+
     if (["completed", "cancelled"].includes(booking.status)) {
       return res.status(400).json({ message: "Completed/Cancelled booking cannot be rescheduled" });
     }
 
     const activeSlotBooking = await Booking.findOne({
       _id: { $ne: booking._id },
+      bookingDate: normalizedBookingDate.value,
       slot,
       status: { $in: ["pending", "confirmed", "in_progress"] },
     });
@@ -260,7 +353,8 @@ app.put("/bookings/:id/reschedule", authMiddleware, async (req, res) => {
       return res.status(409).json({ message: "Slot already booked, choose another slot" });
     }
 
-    booking.rescheduledFrom = booking.slot;
+    booking.rescheduledFrom = `${booking.bookingDate || ""} ${booking.slot}`.trim();
+    booking.bookingDate = normalizedBookingDate.value;
     booking.slot = slot;
     booking.status = "confirmed";
     booking.rescheduleReason = reason || "";
@@ -329,7 +423,13 @@ app.post("/verify-otp", (req, res) => {
 
 // Slots
 app.get("/available-slots", async (_req, res) => {
+  const normalizedBookingDate = normalizeBookingDate(_req.query.date);
+  if (normalizedBookingDate.error) {
+    return res.status(400).json({ message: normalizedBookingDate.error });
+  }
+
   const bookings = await Booking.find({
+    bookingDate: normalizedBookingDate.value,
     status: { $in: ["pending", "confirmed", "in_progress"] },
   });
 

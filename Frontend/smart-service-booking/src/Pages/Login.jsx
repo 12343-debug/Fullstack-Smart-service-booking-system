@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
-  Container,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import AnimatedPage from "../components/AnimatedPage";
 import PageWrapper from "../components/PageWrapper";
+import BackButton from "../components/BackButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,15 +19,20 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    
     try {
       const res = await loginUser(email, password);
 
       localStorage.setItem("token", res.token);
       localStorage.setItem("role", (res.role || "").toString().trim().toLowerCase());
 
-      alert("Login Successful");
-      navigate("/services");
+      navigate("/auth-success", {
+        state: {
+          title: "Login Successful",
+          message: "Welcome back. Your account is ready and you can continue to services.",
+          buttonLabel: "Go To Services",
+          redirectTo: "/services",
+        },
+      });
     } catch (err) {
       alert("Login failed");
     }
@@ -36,6 +41,7 @@ const Login = () => {
   return (
     <PageWrapper>
       <AnimatedPage>
+        <BackButton />
         <Box
           sx={{
             minHeight: "60vh",

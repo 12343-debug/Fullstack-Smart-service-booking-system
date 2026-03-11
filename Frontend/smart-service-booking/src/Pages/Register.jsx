@@ -1,24 +1,39 @@
 import { useState } from "react";
 import { registerUser } from "../services/authApi";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Box,
   Button,
-  Paper,
+  Divider,
+  InputAdornment,
+  Link,
+  Stack,
   TextField,
   Typography,
+  IconButton,
 } from "@mui/material";
-import AnimatedPage from "../components/AnimatedPage";
-import PageWrapper from "../components/PageWrapper";
-import BackButton from "../components/BackButton";
+import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
+import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
+import LockOutlineRoundedIcon from "@mui/icons-material/LockOutlineRounded";
+import RemoveRedEyeRoundedIcon from "@mui/icons-material/RemoveRedEyeRounded";
+import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
+import ShieldRoundedIcon from "@mui/icons-material/ShieldRounded";
+import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
+import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
+import AuthShell from "../components/AuthShell";
+import VpnKeyRoundedIcon from "@mui/icons-material/VpnKeyRounded";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [adminSetupKey, setAdminSetupKey] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [passwordError,setPasswordError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isAdminAuth = location.pathname.startsWith("/admin/");
 
   const handleRegister = async () => {
     if (!email.endsWith("@gmail.com")) {
@@ -28,132 +43,212 @@ const Register = () => {
     setEmailError("");
 
     const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])/;
-    if(password.length < 6){
+    if (password.length < 6) {
       setPasswordError("password must be at least 6 characters");
       return;
     }
     if (!passwordRegex.test(password)) {
-    setPasswordError("Password must include a number and a special character");
-    return;
-  }
+      setPasswordError("Password must include a number and a special character");
+      return;
+    }
 
-  setEmailError("");
-  setPasswordError("");
+    setEmailError("");
+    setPasswordError("");
     try {
-      await registerUser(name, email, password);
+      if (isAdminAuth && !adminSetupKey.trim()) {
+        toast.error("Admin setup key is required");
+        return;
+      }
+
+      await registerUser(name, email, password, {
+        role: isAdminAuth ? "admin" : "user",
+        adminSetupKey: isAdminAuth ? adminSetupKey.trim() : undefined,
+      });
       navigate("/auth-success", {
         state: {
-          title: "Registration Successful",
-          message: "Your account has been created successfully. You can now continue to login.",
-          buttonLabel: "Go To Login",
-          redirectTo: "/login",
+          title: isAdminAuth ? "Admin Registration Successful" : "Registration Successful",
+          message: isAdminAuth
+            ? "The admin account has been created successfully. You can now continue to admin login."
+            : "Your account has been created successfully. You can now continue to login.",
+          buttonLabel: isAdminAuth ? "Go To Admin Login" : "Go To Login",
+          redirectTo: isAdminAuth ? "/admin/login" : "/login",
         },
       });
     } catch (error) {
-      alert("Registration Failed");
+      const message = error?.response?.data?.message || "Registration Failed";
+
+      if (isAdminAuth && message === "Email already registered") {
+        toast.error("This email already exists. Use a new email or promote the existing account to admin.");
+        return;
+      }
+
+      if (isAdminAuth && message === "Invalid admin setup key") {
+        toast.error("Admin setup key is incorrect. Check Backend/.env and restart the backend.");
+        return;
+      }
+
+      toast.error(message);
     }
   };
 
   return (
-    <PageWrapper>
-      <AnimatedPage>
-        <BackButton />
-        <Box
-          sx={{
-            minHeight: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "-webkit-center",
+    <AuthShell
+      badge={isAdminAuth ? "Admin Registration" : "Create Account"}
+      formTitle={isAdminAuth ? "Create admin access" : "Start booking in minutes"}
+      formSubtitle={
+        isAdminAuth
+          ? "Register an admin account using the setup key so dashboard access remains limited to authorized operators."
+          : "Set up your account once and keep all service requests, schedules, and updates organized in one place."
+      }
+      sideEyebrow={isAdminAuth ? "Admin Onboarding" : "Customer Onboarding"}
+      sideTitle={
+        isAdminAuth
+          ? "Secure admin account creation using the current auth experience."
+          : "A polished registration flow built to feel trustworthy from the first screen."
+      }
+      sideDescription={
+        isAdminAuth
+          ? "This path creates dashboard-capable accounts only when the correct admin setup key is provided by the system owner."
+          : "Create your account with a clean, high-clarity form experience designed for modern service products and repeat customer use."
+      }
+      sidePoints={[
+        {
+          title: isAdminAuth ? "Protected admin provisioning" : "Verified account setup",
+          description: isAdminAuth
+            ? "Admin registration is guarded by a setup key so public visitors cannot create dashboard accounts."
+            : "Structured validation helps keep signups clean and account access more reliable.",
+          icon: <ShieldRoundedIcon sx={{ color: "#bfdbfe" }} />,
+        },
+        {
+          title: isAdminAuth ? "Instant dashboard readiness" : "Fast path to booking",
+          description: isAdminAuth
+            ? "Once created, the same account can sign into the admin-only login flow and open the dashboard."
+            : "Register once, then move directly into service selection and booking management.",
+          icon: <BoltRoundedIcon sx={{ color: "#bfdbfe" }} />,
+        },
+        {
+          title: isAdminAuth ? "Operational control" : "Support-ready experience",
+          description: isAdminAuth
+            ? "Keep service management accounts separate from normal customer users."
+            : "A clearer customer profile makes follow-up, updates, and service coordination easier later.",
+          icon: <SupportAgentRoundedIcon sx={{ color: "#bfdbfe" }} />,
+        },
+      ]}
+    >
+      <Stack spacing={2}>
+        <TextField
+          label="Full Name"
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <PersonOutlineRoundedIcon sx={{ color: "#64748b" }} />
+              </InputAdornment>
+            ),
           }}
-        >
-          <Box sx={{ width: "450px", maxWidth: 400 }}>
-            <Paper elevation={6} sx={{ p: 4, width: "100%", borderRadius: 3 }}>
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                align="center"
-                gutterBottom
-              >
-                Create Account
-              </Typography>
-              <Typography
-                variant="body2"
-                align="center"
-                color="text.secondary"
-                mb={3}
-              >
-                Register to book services easily
-              </Typography>
-              <TextField
-                label="Full name"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <TextField
-                label="Email Address"
-                type="email"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (e.target.value.endsWith("@gmail.com")) {
-                    setEmailError("");
-                  }
-                }}
-                error={Boolean(emailError)}
-                helperText={emailError}
-              />
-              <TextField
-                label="Password"
-                type="password"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={password}
-                onChange={(e) =>{ setPassword(e.target.value);
-                  setPassword(e.target.value);
-                  setEmailError("");
-
-                }}
-                error ={Boolean(passwordError)}
-                helperText={passwordError}
-              />
-              <Button
-                variant="success"
-                fullWidth
-                size="large"
-                sx={{
-                  mt: 3,
-                  py: 1.3,
-                  fontWeight: "bold",
-                  borderRadius: 2,
-                  backgroundColor: "#516b86",
-                  color: "white",
-                }}
-                onClick={handleRegister}
-              >
-                Register
-              </Button>
-              <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                Already have an account?{" "}
-                <span
-                  style={{ color: "#1976d2", cursor: "pointer" }}
-                  onClick={() => navigate("/login")}
+        />
+        <TextField
+          label="Email Address"
+          type="email"
+          fullWidth
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (e.target.value.endsWith("@gmail.com")) {
+              setEmailError("");
+            }
+          }}
+          error={Boolean(emailError)}
+          helperText={emailError}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <MailOutlineRoundedIcon sx={{ color: "#64748b" }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+        <TextField
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          fullWidth
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setPasswordError("");
+          }}
+          error={Boolean(passwordError)}
+          helperText={passwordError || "Use at least 6 characters, one number, and one special character."}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <LockOutlineRoundedIcon sx={{ color: "#64748b" }} />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  edge="end"
+                  onClick={() => setShowPassword((value) => !value)}
                 >
-                  Login
-                </span>
-              </Typography>
-            </Paper>
-          </Box>
-        </Box>
-      </AnimatedPage>
-    </PageWrapper>
+                  {showPassword ? <VisibilityOffRoundedIcon /> : <RemoveRedEyeRoundedIcon />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+        {isAdminAuth && (
+          <TextField
+            label="Admin Setup Key"
+            type={showPassword ? "text" : "password"}
+            fullWidth
+            value={adminSetupKey}
+            onChange={(e) => setAdminSetupKey(e.target.value)}
+            helperText="This key must match the backend ADMIN_SETUP_KEY value."
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <VpnKeyRoundedIcon sx={{ color: "#64748b" }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
+        <Button
+          variant="contained"
+          fullWidth
+          size="large"
+          sx={{
+            mt: 1,
+            py: 1.5,
+            borderRadius: 3,
+            fontWeight: 700,
+            background: "linear-gradient(135deg, #0f172a, #2563eb)",
+            boxShadow: "0 16px 32px rgba(37, 99, 235, 0.24)",
+          }}
+          onClick={handleRegister}
+        >
+          {isAdminAuth ? "Create Admin Account" : "Create Account"}
+        </Button>
+
+        <Divider sx={{ my: 0.5, color: "#94a3b8", fontSize: 12 }}>or</Divider>
+
+        <Typography sx={{ color: "#475569", textAlign: "center", fontSize: 14.5 }}>
+          {isAdminAuth ? "Already have admin access?" : "Already registered? "}
+          <Link
+            component="button"
+            type="button"
+            underline="hover"
+            onClick={() => navigate(isAdminAuth ? "/admin/login" : "/login")}
+            sx={{ fontWeight: 700, color: "#1d4ed8" }}
+          >
+            {isAdminAuth ? "Sign in as admin" : "Sign in instead"}
+          </Link>
+        </Typography>
+      </Stack>
+    </AuthShell>
   );
 };
 

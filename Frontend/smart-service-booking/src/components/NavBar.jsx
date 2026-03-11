@@ -15,10 +15,12 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const NavBar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const role = (localStorage.getItem("role") || "").trim().toLowerCase();
 
   // dropdown state
   const [anchorEl, setAnchorEl] = useState(null);
@@ -33,9 +35,24 @@ const NavBar = () => {
   };
 
   const handleLogout = () => {
+    handleClose();
     localStorage.removeItem("token");
     localStorage.removeItem("role");
-    navigate("/login");
+    navigate("/home", { replace: true });
+  };
+
+  const handleAdminAccess = () => {
+    if (!token) {
+      navigate("/admin/login");
+      return;
+    }
+
+    if (role !== "admin") {
+      toast.error("Please logout and login with an admin account.");
+      return;
+    }
+
+    navigate("/admin");
   };
 
   const navButtonSx = {
@@ -54,21 +71,6 @@ const NavBar = () => {
       color: "#ffffff",
       background: "linear-gradient(135deg, #0f172a, #1e3a8a)",
       boxShadow: "0 8px 18px rgba(15, 23, 42, 0.25)",
-    },
-  };
-
-  const primaryButtonSx = {
-    textTransform: "none",
-    fontWeight: 700,
-    fontStyle: "normal",
-    letterSpacing: 0.2,
-    fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-    fontSize: { xs: 14, md: 15 },
-    borderRadius: 2,
-    px: 2,
-    backgroundColor: "#0f172a",
-    "&:hover": {
-      backgroundColor: "#020617",
     },
   };
 
@@ -163,8 +165,7 @@ const NavBar = () => {
             <Button
               color="inherit"
               sx={navButtonSx}
-              component={Link}
-              to="/admin"
+              onClick={handleAdminAccess}
             >
               Admin
             </Button>
@@ -172,8 +173,7 @@ const NavBar = () => {
               color="inherit"
               component={Link}
               to="/register"
-              variant="contained"
-              sx={primaryButtonSx}
+              sx={navButtonSx}
             >
               Register
             </Button>
@@ -188,7 +188,7 @@ const NavBar = () => {
             <Button
               color="inherit"
               sx={navButtonSx}
-              onClick={() => navigate("/admin")}
+              onClick={handleAdminAccess}
             >
               Admin
             </Button>

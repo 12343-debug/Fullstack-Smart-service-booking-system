@@ -3,7 +3,8 @@ import { Button, Card, CardContent, TextField, Typography } from "@mui/material"
 import PageWrapper from "../../components/PageWrapper";
 import AnimatedPage from "../../components/AnimatedPage";
 import BackButton from "../../components/BackButton";
-import api from "../../services/api";
+import { addService } from "../../services/servicesApi";
+import toast from "react-hot-toast";
 
 
 const AddService = () => {
@@ -12,25 +13,24 @@ const AddService = () => {
   const [image, setImage] = useState("");
   const [price, setPrice] = useState("");
   const [estimatedDuration, setEstimatedDuration] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const handleAddService = async () => {
-    
-    await api.post(
-      "/add-service",
-      { title, icon, image, price, estimatedDuration },
-      {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-      }
-    );
+    try {
+      setSaving(true);
+      await addService({ title, icon, image, price, estimatedDuration });
 
-    setTitle("");
-    setIcon("");
-    setImage("");
-    setPrice("");
-    setEstimatedDuration("");
-    alert("Service added successfully");
+      setTitle("");
+      setIcon("");
+      setImage("");
+      setPrice("");
+      setEstimatedDuration("");
+      toast.success("Service added successfully");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to add service");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -87,9 +87,10 @@ const AddService = () => {
               variant="contained"
               fullWidth
               sx={{ mt: 2 }}
+              disabled={saving}
               onClick={handleAddService}
             >
-              Add Service
+              {saving ? "Adding..." : "Add Service"}
             </Button>
           </CardContent>
         </Card>

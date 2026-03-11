@@ -23,7 +23,6 @@ import TimelineIcon from "@mui/icons-material/Timeline";
 import "./Home.css";
 import AnimatedPage from "../components/AnimatedPage";
 import PageWrapper from "../components/PageWrapper";
-import BackButton from "../components/BackButton";
 
 const featureCardStyle = {
   height: "100%",
@@ -120,9 +119,6 @@ const Home = () => {
             pb: { xs: 8, md: 10 },
           }}
         >
-          <Container maxWidth="xl" sx={{ mb: 2 }}>
-            <BackButton />
-          </Container>
           {/* ================= HERO SECTION ================= */}
           <Container maxWidth="xl" className="reveal delay-1">
             <Box

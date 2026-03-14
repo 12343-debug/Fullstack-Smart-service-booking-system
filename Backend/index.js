@@ -22,7 +22,7 @@ const {
   normalizeLocation,
 } = require("./utils/bookingValidation");
 
-const app = express();
+const app = express(); //express app starts here
 const otpStore = {};
 
 const allowedOrigins = (process.env.CLIENT_URLS || "")

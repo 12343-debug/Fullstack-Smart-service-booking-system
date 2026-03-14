@@ -21,11 +21,12 @@ const AuthShell = ({
 }) => {
   return (
     <PageWrapper
+      theme="plum"
       sx={{
         pt: { xs: 8, md: 10 },
         pb: { xs: 4, md: 6 },
         background:
-          "radial-gradient(circle at top left, rgba(29, 78, 216, 0.16), transparent 28%), linear-gradient(145deg, #eff5ff 0%, #f8fbff 45%, #eef2f7 100%)",
+          "radial-gradient(circle at top left, rgba(168, 85, 247, 0.2), transparent 24%), radial-gradient(circle at 88% 16%, rgba(236, 72, 153, 0.18), transparent 18%), linear-gradient(145deg, #f8efff 0%, #fbe8f5 48%, #eef6ff 100%)",
       }}
     >
       <AnimatedPage>
@@ -36,7 +37,8 @@ const AuthShell = ({
             overflow: "hidden",
             borderRadius: { xs: 4, md: 6 },
             border: "1px solid rgba(148, 163, 184, 0.25)",
-            backgroundColor: "rgba(255, 255, 255, 0.78)",
+            background:
+              "linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(255, 245, 251, 0.78))",
             backdropFilter: "blur(18px)",
             boxShadow: "0 28px 80px rgba(15, 23, 42, 0.12)",
           }}
@@ -64,17 +66,17 @@ const AuthShell = ({
               sx={{
                 p: { xs: 3, sm: 4, md: 6 },
                 color: "#e2e8f0",
-                background:
-                  "linear-gradient(160deg, #0f172a 0%, #132a4f 52%, #1d4ed8 100%)",
+              background:
+                "linear-gradient(160deg, #521b75 0%, #8b2bbd 44%, #ec4899 100%)",
               }}
             >
               <Chip
                 label={sideEyebrow}
                 sx={{
                   mb: 3,
-                  color: "#dbeafe",
-                  backgroundColor: "rgba(191, 219, 254, 0.14)",
-                  border: "1px solid rgba(191, 219, 254, 0.24)",
+                  color: "#fae8ff",
+                  backgroundColor: "rgba(250, 232, 255, 0.14)",
+                  border: "1px solid rgba(250, 232, 255, 0.22)",
                   fontWeight: 700,
                   letterSpacing: 0.3,
                 }}
@@ -117,8 +119,8 @@ const AuthShell = ({
                       alignItems: "flex-start",
                       borderRadius: 3,
                       color: "#e2e8f0",
-                      backgroundColor: "rgba(15, 23, 42, 0.28)",
-                      border: "1px solid rgba(191, 219, 254, 0.14)",
+                      backgroundColor: "rgba(88, 28, 135, 0.24)",
+                      border: "1px solid rgba(250, 232, 255, 0.14)",
                     }}
                   >
                     <Box
@@ -130,7 +132,7 @@ const AuthShell = ({
                         placeItems: "center",
                         borderRadius: 2.5,
                         background:
-                          "linear-gradient(145deg, rgba(125, 211, 252, 0.2), rgba(96, 165, 250, 0.3))",
+                          "linear-gradient(145deg, rgba(251, 207, 232, 0.2), rgba(216, 180, 254, 0.3))",
                       }}
                     >
                       {point.icon}
@@ -159,7 +161,7 @@ const AuthShell = ({
               <Box sx={{ width: "100%", maxWidth: 480 }}>
                 <Typography
                   sx={{
-                    color: "#1d4ed8",
+                    color: "#8b2bbd",
                     fontSize: 13,
                     fontWeight: 800,
                     letterSpacing: 1.2,
@@ -198,8 +200,9 @@ const AuthShell = ({
                   sx={{
                     p: { xs: 2.5, md: 3 },
                     borderRadius: 4,
-                    backgroundColor: "rgba(255, 255, 255, 0.82)",
-                    border: "1px solid rgba(148, 163, 184, 0.18)",
+                    background:
+                      "linear-gradient(145deg, rgba(255, 255, 255, 0.84), rgba(255, 244, 250, 0.86))",
+                    border: "1px solid rgba(216, 180, 254, 0.26)",
                     boxShadow: "0 18px 40px rgba(15, 23, 42, 0.08)",
                   }}
                 >

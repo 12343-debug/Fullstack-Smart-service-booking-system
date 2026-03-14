@@ -50,8 +50,8 @@ const AuthSuccess = () => {
               borderRadius: 6,
               color: "#fff",
               background:
-                "linear-gradient(145deg, #1b8f43 0%, #26a553 45%, #48c774 100%)",
-              boxShadow: "0 28px 80px rgba(33, 115, 53, 0.32)",
+                "linear-gradient(145deg, #173d32 0%, #14532d 45%, #0f766e 100%)",
+              boxShadow: "0 28px 80px rgba(20, 83, 45, 0.28)",
             }}
           >
             {CELEBRATION_PARTICLES.map((particle, index) => (

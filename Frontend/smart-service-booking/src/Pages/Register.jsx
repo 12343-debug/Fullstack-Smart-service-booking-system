@@ -116,7 +116,7 @@ const Register = () => {
           title: isAdminAuth ? "Protected admin provisioning" : "Verified account setup",
           description: isAdminAuth
             ? "Admin registration is guarded by a setup key so public visitors cannot create dashboard accounts."
-            : "Structured validation helps keep signups clean and account access more reliable.",
+            : "Structured validation helps keep signup clean and account access more reliable.",
           icon: <ShieldRoundedIcon sx={{ color: "#bfdbfe" }} />,
         },
         {

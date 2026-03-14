@@ -53,7 +53,8 @@ const DirectionsButton = ({ destination, sx = {}, label = "Get Directions" }) =>
         fontWeight: 700,
         borderColor: "#0f766e",
         color: "#0f766e",
-        "&:hover": { borderColor: "#0f766e", backgroundColor: "#f0fdfa" },
+        borderRadius: 999,
+        "&:hover": { borderColor: "#0f766e", backgroundColor: "#f2fbf8" },
         ...sx,
       }}
     >

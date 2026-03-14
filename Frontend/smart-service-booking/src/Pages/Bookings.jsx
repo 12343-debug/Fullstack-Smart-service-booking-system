@@ -32,6 +32,7 @@ import MapPreviewCard from "../components/MapPreviewCard";
 import DirectionsButton from "../components/DirectionsButton";
 import api from "../services/api";
 import { buildMapsUrl, formatCoordinates } from "../utils/location";
+import PageHero from "../components/PageHero";
 
 const Bookings = () => {
   const today = new Date().toISOString().split("T")[0];
@@ -247,33 +248,37 @@ const Bookings = () => {
       }}
     >
       <PageWrapper
+        theme="ocean"
         sx={{
           pt: 6,
-          "& .MuiContainer-root": {
-            maxWidth: "100% !important",
-            px: { xs: 2, md: 4 },
-          },
         }}
+        maxWidth="xl"
+        containerSx={{ px: { xs: 2, md: 4 } }}
       >
         <AnimatedPage>
           <BackButton sx={{ backgroundColor: "rgba(255,255,255,0.85)" }} />
-          <Typography
-            variant="h4"
-            textAlign="center"
-            gutterBottom
-            sx={{ color: "#0f172a", fontWeight: 700 }}
-          >
-            My Bookings
-          </Typography>
+          <PageHero
+            eyebrow="Booking Hub"
+            title="Track, update, and reschedule every booking"
+            description="Use the search, filters, and status view to manage upcoming service visits without losing the details tied to each address."
+            tone="ocean"
+            stats={[
+              { label: "Total Bookings", value: totalCount },
+              { label: "Pending", value: pendingCount },
+              { label: "Completed", value: completedCount },
+              { label: "Visible Results", value: finalBookings.length },
+            ]}
+          />
           <Box
             sx={{
               p: { xs: 2, md: 3 },
               mb: 3,
-              borderRadius: 3,
-              border: "1px solid #d7dee8",
-              backgroundColor: "rgba(255, 255, 255, 0.82)",
-              backdropFilter: "blur(6px)",
-              boxShadow: "0 12px 35px rgba(15, 23, 42, 0.08)",
+              borderRadius: 4,
+              border: "1px solid rgba(14, 165, 233, 0.16)",
+              background:
+                "linear-gradient(145deg, rgba(255,255,255,0.72), rgba(224,242,254,0.82))",
+              backdropFilter: "blur(10px)",
+              boxShadow: "var(--shadow-soft)",
             }}
           >
             <Box
@@ -291,9 +296,9 @@ const Bookings = () => {
                 p: 2,
                 minWidth: 150,
                 textAlign: "center",
-                backgroundColor: "#ffffff",
-                border: "1px solid #d7dee8",
-                boxShadow: "0 8px 18px rgba(15, 23, 42, 0.08)",
+                background: "linear-gradient(180deg, rgba(255,255,255,0.78), rgba(224,242,254,0.84))",
+                border: "1px solid rgba(14, 165, 233, 0.12)",
+                boxShadow: "none",
               }}
             >
               <Typography sx={{ color: "#64748b", fontSize: 14 }}>Total</Typography>
@@ -306,9 +311,9 @@ const Bookings = () => {
                 p: 2,
                 minWidth: 150,
                 textAlign: "center",
-                backgroundColor: "#ffffff",
-                border: "1px solid #d7dee8",
-                boxShadow: "0 8px 18px rgba(15, 23, 42, 0.08)",
+                background: "linear-gradient(180deg, rgba(255,255,255,0.78), rgba(224,242,254,0.84))",
+                border: "1px solid rgba(14, 165, 233, 0.12)",
+                boxShadow: "none",
               }}
             >
               <Typography sx={{ color: "#64748b", fontSize: 14 }}>Pending</Typography>
@@ -321,9 +326,9 @@ const Bookings = () => {
                 p: 2,
                 minWidth: 150,
                 textAlign: "center",
-                backgroundColor: "#ffffff",
-                border: "1px solid #d7dee8",
-                boxShadow: "0 8px 18px rgba(15, 23, 42, 0.08)",
+                background: "linear-gradient(180deg, rgba(255,255,255,0.78), rgba(224,242,254,0.84))",
+                border: "1px solid rgba(14, 165, 233, 0.12)",
+                boxShadow: "none",
               }}
             >
               <Typography sx={{ color: "#64748b", fontSize: 14 }}>Completed</Typography>
@@ -357,8 +362,9 @@ const Bookings = () => {
                 height: 40,
                 fontWeight: 700,
                 textTransform: "none",
-                backgroundColor: "#0f172a",
-                "&:hover": { backgroundColor: "#020617" },
+                borderRadius: 999,
+                background: "linear-gradient(135deg, #173d32, #0f766e)",
+                "&:hover": { background: "linear-gradient(135deg, #10261f, #115e59)" },
               }}
             >
               Refresh
@@ -380,10 +386,10 @@ const Bookings = () => {
               sx={{
                 textTransform: "none",
                 fontWeight: 600,
-                borderRadius: 2,
+                borderRadius: 999,
                 ...(filter === "all" && {
-                  backgroundColor: "#0f172a",
-                  "&:hover": { backgroundColor: "#020617" },
+                  background: "linear-gradient(135deg, #173d32, #0f766e)",
+                  "&:hover": { background: "linear-gradient(135deg, #10261f, #115e59)" },
                 }),
               }}
             >
@@ -397,10 +403,10 @@ const Bookings = () => {
                 sx={{
                   textTransform: "none",
                   fontWeight: 600,
-                  borderRadius: 2,
+                  borderRadius: 999,
                   ...(filter === status && {
-                    backgroundColor: "#0f172a",
-                    "&:hover": { backgroundColor: "#020617" },
+                    background: "linear-gradient(135deg, #173d32, #0f766e)",
+                    "&:hover": { background: "linear-gradient(135deg, #10261f, #115e59)" },
                   }),
                 }}
               >
@@ -491,14 +497,15 @@ const Bookings = () => {
                       sx={{
                         height: "100%",
                         p: 2,
-                        borderRadius: 3.5,
-                        backgroundColor: "#ffffff",
-                        border: "1px solid #d7dee8",
-                        boxShadow: "0 12px 26px rgba(15, 23, 42, 0.10)",
+                        borderRadius: 4,
+                        background:
+                          "linear-gradient(180deg, rgba(255,255,255,0.84), rgba(239,246,255,0.92))",
+                        border: "1px solid rgba(14, 165, 233, 0.16)",
+                        boxShadow: "var(--shadow-card)",
                         transition: "0.25s",
                         "&:hover": {
-                          boxShadow: "0 16px 32px rgba(15, 23, 42, 0.14)",
-                          transform: "translateY(-2px)",
+                          boxShadow: "0 22px 42px rgba(52, 40, 25, 0.14)",
+                          transform: "translateY(-4px)",
                         },
                       }}
                     >

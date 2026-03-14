@@ -20,6 +20,7 @@ import MapPreviewCard from "../components/MapPreviewCard";
 import api from "../services/api";
 import { getServiceVisual } from "../utils/serviceVisuals";
 import { buildMapsUrl, formatCoordinates } from "../utils/location";
+import PageHero from "../components/PageHero";
 
 const formatPrice = (price) =>
   Number.isFinite(Number(price)) ? `Rs. ${Number(price).toLocaleString("en-IN")}` : "Price on request";
@@ -147,32 +148,35 @@ const Services = () => {
       }}
     >
       <PageWrapper
+        theme="sunset"
         sx={{
           pt: 6,
-          "& .MuiContainer-root": {
-            maxWidth: "100% !important",
-            px: { xs: 2, md: 4 },
-          },
         }}
+        maxWidth="xl"
+        containerSx={{ px: { xs: 2, md: 4 } }}
       >
         <AnimatedPage>
           <BackButton />
-          <Typography
-            variant="h4"
-            textAlign="center"
-            gutterBottom
-            sx={{ color: "#0f172a", fontWeight: 700 }}
-          >
-            Available services
-          </Typography>
+          <PageHero
+            eyebrow="Customer Services"
+            title="Choose a service and book it in one flow"
+            description="Fill in your service details once, compare available options, and confirm a visit without jumping between pages."
+            tone="sunset"
+            stats={[
+              { label: "Services Loaded", value: services.length || "0" },
+              { label: "Available Slots", value: slots.length || "0" },
+              { label: "Selected Date", value: selectedDate || "Today" },
+            ]}
+          />
           <Box
             sx={{
               p: { xs: 2, sm: 3 },
-              borderRadius: 3,
-              border: "1px solid #d7dee8",
-              backgroundColor: "rgba(255, 255, 255, 0.82)",
-              backdropFilter: "blur(6px)",
-              boxShadow: "0 12px 35px rgba(15, 23, 42, 0.08)",
+              borderRadius: 4,
+              border: "1px solid rgba(249, 115, 22, 0.16)",
+              background:
+                "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,237,213,0.78))",
+              backdropFilter: "blur(10px)",
+              boxShadow: "var(--shadow-soft)",
               mb: 4,
             }}
           >
@@ -257,7 +261,8 @@ const Services = () => {
                   borderColor: "#0f766e",
                   color: "#0f766e",
                   fontWeight: 600,
-                  "&:hover": { borderColor: "#0f766e", backgroundColor: "#f0fdfa" },
+                  borderRadius: 999,
+                  "&:hover": { borderColor: "#0f766e", backgroundColor: "#f2fbf8" },
                 }}
               >
                 {locating ? "Locating..." : "Use Current Location"}
@@ -305,9 +310,9 @@ const Services = () => {
                     })}
                     target="_blank"
                     rel="noreferrer"
-                    sx={{ mt: 1, px: 0, textTransform: "none", fontWeight: 700 }}
-                  >
-                    Open in Google Maps
+                  sx={{ mt: 1, px: 0, textTransform: "none", fontWeight: 700 }}
+                >
+                  Open in Google Maps
                   </Button>
                 ) : null}
                 <MapPreviewCard
@@ -334,14 +339,15 @@ const Services = () => {
                 <Card
                   sx={{
                     borderRadius: 3,
-                    boxShadow: "0 12px 25px rgba(15, 23, 42, 0.10)",
-                    border: "1px solid #d7dee8",
+                    boxShadow: "var(--shadow-card)",
+                    border: "1px solid rgba(249, 115, 22, 0.16)",
                     height: "100%",
-                    backgroundColor: "#ffffff",
+                    background:
+                      "linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,244,231,0.88))",
                     transition: "all 0.25s ease",
                     "&:hover": {
-                      transform: "translateY(-2px)",
-                      boxShadow: "0 16px 30px rgba(15, 23, 42, 0.14)",
+                      transform: "translateY(-4px)",
+                      boxShadow: "0 22px 40px rgba(52, 40, 25, 0.14)",
                     },
                   }}
                 >
@@ -485,8 +491,10 @@ const Services = () => {
                         mt: 2,
                         fontWeight: 700,
                         textTransform: "none",
-                        backgroundColor: "#0f172a",
-                        "&:hover": { backgroundColor: "#020617" },
+                        borderRadius: 999,
+                        background: "linear-gradient(135deg, #173d32, #0f766e)",
+                        boxShadow: "0 14px 26px rgba(20, 83, 45, 0.2)",
+                        "&:hover": { background: "linear-gradient(135deg, #10261f, #115e59)" },
                       }}
                       onClick={() => handleBook(service.title)}
                     >

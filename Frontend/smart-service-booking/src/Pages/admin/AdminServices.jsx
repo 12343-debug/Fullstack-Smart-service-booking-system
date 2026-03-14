@@ -13,6 +13,7 @@ import BackButton from "../../components/BackButton";
 import api from "../../services/api";
 import AdminNavbar from "./AdminNavBar";
 import { getServiceVisual } from "../../utils/serviceVisuals";
+import PageHero from "../../components/PageHero";
 
 const formatPrice = (price) =>
   Number.isFinite(Number(price)) ? `Rs. ${Number(price).toLocaleString("en-IN")}` : "Price not set";
@@ -37,14 +38,22 @@ const AdminServices = () => {
   };
 
   return (
-    <PageWrapper>
+    <PageWrapper theme="plum" maxWidth="xl" containerSx={{ px: { xs: 2, md: 4 } }}>
       <AnimatedPage>
         <BackButton />
         <AdminNavbar />
-
-        <Typography variant="h4" textAlign="center" mt={3} mb={4}>
-          Manage Services
-        </Typography>
+        <PageHero
+          eyebrow="Service Catalog"
+          title="Manage the service lineup with richer visual cards"
+          description="Every service card now carries a themed visual treatment so the admin catalog feels closer to a real operations product than a plain list."
+          tone="plum"
+          stats={[
+            { label: "Total Services", value: services.length },
+            { label: "Priced Services", value: services.filter((service) => service.price).length },
+            { label: "Duration Set", value: services.filter((service) => service.estimatedDuration).length },
+          ]}
+          sx={{ mt: 3 }}
+        />
 
         <Grid container spacing={3} sx={{justifyContent:"center"}}>
           {services.map((service) => (
@@ -53,8 +62,10 @@ const AdminServices = () => {
                 sx={{
                   borderRadius: 3,
                   overflow: "hidden",
-                  border: "1px solid #d7dee8",
-                  boxShadow: "0 12px 25px rgba(15, 23, 42, 0.10)",
+                  border: "1px solid rgba(168, 85, 247, 0.16)",
+                  boxShadow: "var(--shadow-card)",
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.84), rgba(243,232,255,0.9))",
                 }}
               >
                 <Box
@@ -149,7 +160,7 @@ const AdminServices = () => {
                     variant="contained"
                     color="error"
                     fullWidth
-                    sx={{ mt: 2 }}
+                    sx={{ mt: 2, borderRadius: 999, fontWeight: 700 }}
                     onClick={() => handleDelete(service._id)}
                   >
                     Delete

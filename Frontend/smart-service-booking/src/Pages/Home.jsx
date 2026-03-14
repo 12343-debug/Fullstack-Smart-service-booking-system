@@ -1,537 +1,413 @@
-import {
-  Typography,
-  Container,
-  Box,
-  Grid,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import BuildIcon from "@mui/icons-material/Build";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import { Box, Button, Chip, Grid, Stack, Typography } from "@mui/material";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import ElectricalServicesIcon from "@mui/icons-material/ElectricalServices";
 import PlumbingIcon from "@mui/icons-material/Plumbing";
-import StarIcon from "@mui/icons-material/Star";
 import ScheduleIcon from "@mui/icons-material/Schedule";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import HandymanIcon from "@mui/icons-material/Handyman";
 import TimelineIcon from "@mui/icons-material/Timeline";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import { useNavigate } from "react-router-dom";
 import "./Home.css";
 import AnimatedPage from "../components/AnimatedPage";
 import PageWrapper from "../components/PageWrapper";
 
-const featureCardStyle = {
-  height: "100%",
-  textAlign: "left",
-  p: 3,
-  borderRadius: 3,
-  border: "1px solid #d7dee8",
-  boxShadow: "0 10px 22px rgba(15, 23, 42, 0.08)",
-  backgroundColor: "#ffffff",
-  transition: "all 0.25s ease",
-  "&:hover": {
-    transform: "translateY(-4px)",
-    boxShadow: "0 16px 30px rgba(15, 23, 42, 0.14)",
+const services = [
+  {
+    title: "Cleaning",
+    description: "Regular cleaning, deep cleaning, and scheduled upkeep with a quick booking flow.",
+    icon: <CleaningServicesIcon sx={{ fontSize: 30 }} />,
+    accent: "#0ea5e9",
+    bg: "linear-gradient(135deg, rgba(14,165,233,0.14), rgba(37,99,235,0.08))",
   },
-};
+  {
+    title: "Electrical",
+    description: "Repairs, fittings, and inspection requests handled through one service workflow.",
+    icon: <ElectricalServicesIcon sx={{ fontSize: 30 }} />,
+    accent: "#7c3aed",
+    bg: "linear-gradient(135deg, rgba(124,58,237,0.14), rgba(219,39,119,0.08))",
+  },
+  {
+    title: "Plumbing",
+    description: "Book plumbing support with location details, preferred date, and time slot selection.",
+    icon: <PlumbingIcon sx={{ fontSize: 30 }} />,
+    accent: "#0f766e",
+    bg: "linear-gradient(135deg, rgba(20,184,166,0.14), rgba(15,118,110,0.08))",
+  },
+];
+
+const benefits = [
+  {
+    title: "Simple booking",
+    description: "Customers can register, choose a service, select a slot, and confirm with minimal steps.",
+    icon: <ScheduleIcon sx={{ color: "#2563eb" }} />,
+    stat: "3 steps",
+  },
+  {
+    title: "Reliable flow",
+    description: "Structured booking details and protected access make the service process clearer.",
+    icon: <VerifiedUserIcon sx={{ color: "#2563eb" }} />,
+    stat: "Protected",
+  },
+  {
+    title: "Admin control",
+    description: "Admins can manage bookings, service listings, and progress updates from one dashboard.",
+    icon: <SupportAgentIcon sx={{ color: "#2563eb" }} />,
+    stat: "Real-time",
+  },
+];
+
+const steps = [
+  {
+    id: "01",
+    title: "Login or register",
+    description: "Create access to browse services and manage your bookings.",
+    icon: <HowToRegIcon sx={{ fontSize: 24 }} />,
+  },
+  {
+    id: "02",
+    title: "Choose and book",
+    description: "Pick the service, add location details, and select a suitable date and slot.",
+    icon: <HandymanIcon sx={{ fontSize: 24 }} />,
+  },
+  {
+    id: "03",
+    title: "Track progress",
+    description: "Follow updates while admins manage the booking lifecycle behind the scenes.",
+    icon: <TimelineIcon sx={{ fontSize: 24 }} />,
+  },
+];
 
 const Home = () => {
   const navigate = useNavigate();
-  const services = [
-    {
-      title: "Home Cleaning",
-      image:
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=900&q=80",
-      icon: <CleaningServicesIcon />,
-    },
-    {
-      title: "Electrical Repair",
-      image:
-        "https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=900&q=80",
-      icon: <ElectricalServicesIcon />,
-    },
-    {
-      title: "Plumbing Service",
-      image:
-        "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=900&q=80",
-      icon: <PlumbingIcon />,
-    },
-  ];
-  const stats = [
-    { label: "Bookings Completed", value: "2,500+", icon: <VerifiedUserIcon /> },
-    { label: "Verified Professionals", value: "350+", icon: <BuildIcon /> },
-    { label: "Avg. Response Time", value: "15 mins", icon: <ScheduleIcon /> },
-    { label: "Customer Rating", value: "4.8/5", icon: <StarIcon /> },
-  ];
-  const trustPoints = [
-    {
-      title: "24/7 Support Team",
-      desc: "Dedicated support to resolve booking and service issues quickly.",
-      icon: <SupportAgentIcon sx={{ color: "#1e3a8a" }} />,
-    },
-    {
-      title: "Secure Booking Flow",
-      desc: "OTP verification and protected routes for safer user access.",
-      icon: <VerifiedUserIcon sx={{ color: "#1e3a8a" }} />,
-    },
-    {
-      title: "On-Time Service Delivery",
-      desc: "Slot-based scheduling helps teams and customers stay on plan.",
-      icon: <ScheduleIcon sx={{ color: "#1e3a8a" }} />,
-    },
-  ];
-  const flowSteps = [
-    {
-      id: "01",
-      title: "Register / Login",
-      desc: "Create your account and securely access all service categories.",
-      icon: <HowToRegIcon sx={{ fontSize: 28 }} />,
-    },
-    {
-      id: "02",
-      title: "Choose & Book",
-      desc: "Select a service, pick your preferred slot, and confirm booking.",
-      icon: <HandymanIcon sx={{ fontSize: 28 }} />,
-    },
-    {
-      id: "03",
-      title: "Track Progress",
-      desc: "Monitor booking updates and manage requests from your dashboard.",
-      icon: <TimelineIcon sx={{ fontSize: 28 }} />,
-    },
-  ];
 
   return (
-    <PageWrapper sx={{ pt: 7 }}>
+    <PageWrapper
+      theme="ocean"
+      containerSx={{ px: { xs: 2, md: 4 } }}
+      sx={{ pt: { xs: 8, md: 10 } }}
+    >
       <AnimatedPage>
-        <Box
-          sx={{
-            minHeight: "100vh",
-            width: "100%",
-            overflowX: "hidden",
-            background:
-              "linear-gradient(145deg, #f4f7fb 0%, #eef3f8 58%, #e7edf5 100%)",
-            pt: { xs: 5, md: 8 },
-            pb: { xs: 8, md: 10 },
-          }}
-        >
-          {/* ================= HERO SECTION ================= */}
-          <Container maxWidth="xl" className="reveal delay-1">
-            <Box
-              sx={{
-                width: "100%",
-                py: { xs: 2, md: 4 },
-                px: { xs: 1, md: 2 },
-              }}
-            >
-              <Grid
-                container
-                spacing={4}
-                alignItems="center"
-                justifyContent="center"
+        <Stack spacing={{ xs: 5, md: 7 }}>
+          <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center" className="reveal delay-1">
+            <Grid item xs={12} lg={7}>
+              <Chip
+                label="Smart Service Booking"
+                sx={{
+                  mb: 2,
+                  fontWeight: 800,
+                  color: "#1d4ed8",
+                  backgroundColor: "rgba(219,234,254,0.9)",
+                }}
+              />
+              <Typography
+                variant="h1"
+                sx={{
+                  fontSize: { xs: 38, md: 64 },
+                  lineHeight: 0.96,
+                  color: "#0f172a",
+                  maxWidth: 760,
+                }}
               >
-                <Grid item xs={12} md={6}>
-                  <Chip
-                    label="Trusted Home Service Platform"
-                    sx={{
-                      mb: 2,
-                      backgroundColor: "#dbeafe",
-                      color: "#1e3a8a",
-                      fontWeight: 700,
-                    }}
-                  />
-                  <Typography
-                    variant="h3"
-                    fontWeight={800}
-                    sx={{ mb: 2.2, color: "#0f172a", fontSize: { xs: 36, md: 48 } }}
-                  >
-                    Smart Service Booking Platform
-                  </Typography>
+                Home services made easy to book and easier to manage.
+              </Typography>
+              <Typography
+                sx={{
+                  mt: 2.2,
+                  maxWidth: 640,
+                  fontSize: { xs: 16, md: 19 },
+                  lineHeight: 1.8,
+                  color: "#475569",
+                }}
+              >
+                This platform is meant for booking household services like cleaning,
+                electrical work, and plumbing, while also giving admins a clean way
+                to manage bookings, services, and schedule updates.
+              </Typography>
 
-                  <Typography
-                    variant="h6"
-                    sx={{ color: "#334155", fontSize: { xs: 17, md: 20 }, mb: 4 }}
-                  >
-                    Book trusted home services like plumbing, electrical work,
-                    cleaning, and repairs in just a few clicks.
-                  </Typography>
-
-                  <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
-                    <Button
-                      variant="contained"
-                      size="large"
-                      sx={{
-                        textTransform: "none",
-                        px: 4,
-                        py: 1.2,
-                        borderRadius: 2.2,
-                        fontWeight: 700,
-                        background: "linear-gradient(135deg, #0f172a, #1d4ed8)",
-                        boxShadow: "0 10px 22px rgba(29,78,216,0.35)",
-                      }}
-                      onClick={() => navigate("/services")}
-                    >
-                      Explore Services
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      size="large"
-                      sx={{
-                        textTransform: "none",
-                        px: 4,
-                        py: 1.2,
-                        borderRadius: 2.2,
-                        fontWeight: 700,
-                        borderColor: "#1e3a8a",
-                        color: "#1e3a8a",
-                      }}
-                      onClick={() => navigate("/bookings")}
-                    >
-                      View Bookings
-                    </Button>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={12} md={6} textAlign="center">
-                  <Box
-                    sx={{
-                      borderRadius: 4,
-                      p: 1,
-                      background: "linear-gradient(145deg, #dbeafe, #eff6ff)",
-                      boxShadow: "0 18px 36px rgba(15, 23, 42, 0.12)",
-                      maxWidth: 560,
-                      mx: "auto",
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        transform: "translateY(-4px)",
-                        boxShadow: "0 22px 40px rgba(15, 23, 42, 0.16)",
-                      },
-                    }}
-                  >
-                    <img
-                      src="https://images.pexels.com/photos/4108711/pexels-photo-4108711.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                      alt="home service professionals"
-                      onError={(e) => {
-                        e.currentTarget.src =
-                          "https://cdn-icons-png.flaticon.com/512/3209/3209265.png";
-                      }}
-                      style={{
-                        width: "100%",
-                        height: "340px",
-                        objectFit: "cover",
-                        borderRadius: "16px",
-                        display: "block",
-                      }}
-                    />
-                    <Typography
-                      sx={{
-                        mt: 1.2,
-                        mb: 0.4,
-                        color: "#0f172a",
-                        fontWeight: 700,
-                        fontSize: { xs: 14, md: 16 },
-                        textAlign: "center",
-                      }}
-                    >
-                      Home Service Professionals
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Box>
-          </Container>
-
-          {/* ================= QUICK STATS ================= */}
-          <Container maxWidth="xl" sx={{ mt: 5 }} className="reveal delay-2">
-            <Grid container spacing={2.2}>
-              {stats.map((item) => (
-                <Grid item xs={12} sm={6} md={3} key={item.label}>
-                  <Card
-                    sx={{
-                      borderRadius: 3,
-                      border: "1px solid #d7dee8",
-                      boxShadow: "0 10px 22px rgba(15, 23, 42, 0.08)",
-                      backgroundColor: "#ffffff",
-                      transition: "all 0.25s ease",
-                      "&:hover": {
-                        transform: "translateY(-4px)",
-                        boxShadow: "0 16px 28px rgba(15, 23, 42, 0.14)",
-                      },
-                    }}
-                  >
-                    <CardContent sx={{ p: 2.5 }}>
-                      <Box sx={{ color: "#1d4ed8", mb: 1 }}>{item.icon}</Box>
-                      <Typography sx={{ color: "#0f172a", fontWeight: 800, fontSize: 26 }}>
-                        {item.value}
-                      </Typography>
-                      <Typography sx={{ color: "#475569", fontWeight: 500 }}>
-                        {item.label}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Container>
-
-          {/* ================= SERVICES SHOWCASE ================= */}
-          <Container maxWidth="xl" sx={{ mt: 4 }} className="reveal delay-3">
-            <Typography
-              variant="h4"
-              sx={{ textAlign: "center", color: "#0f172a", fontWeight: 700 }}
-              gutterBottom
-            >
-              Popular Services
-            </Typography>
-            <Typography
-              sx={{ textAlign: "center", color: "#475569", maxWidth: 700, mx: "auto", mb: 4 }}
-            >
-              Trusted professionals available across core home service categories.
-            </Typography>
-            <Grid container spacing={2.2}>
-              {services.map((service) => (
-                <Grid item xs={12} md={4} key={service.title}>
-                  <Card
-                    sx={{
-                      borderRadius: 3,
-                      overflow: "hidden",
-                      border: "1px solid #d7dee8",
-                      boxShadow: "0 12px 24px rgba(15, 23, 42, 0.10)",
-                      transition: "all 0.25s ease",
-                      "&:hover": {
-                        transform: "translateY(-4px)",
-                        boxShadow: "0 18px 32px rgba(15, 23, 42, 0.16)",
-                      },
-                    }}
-                  >
-                    <Box
-                      component="img"
-                      src={service.image}
-                      alt={service.title}
-                      sx={{ width: "100%", height: 220, objectFit: "cover" }}
-                    />
-                    <CardContent sx={{ p: 2.2 }}>
-                      <Typography
-                        variant="h6"
-                        sx={{ color: "#0f172a", fontWeight: 700, display: "flex", gap: 1, alignItems: "center" }}
-                      >
-                        {service.icon}
-                        {service.title}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Container>
-
-          {/* ================= TRUST SECTION ================= */}
-          <Container maxWidth="lg" sx={{ mt: 9 }} className="reveal delay-2">
-            <Typography
-              variant="h4"
-              textAlign="center"
-              gutterBottom
-              sx={{ color: "#0f172a", fontWeight: 700 }}
-            >
-              Built For Reliability
-            </Typography>
-            <Grid container spacing={3} sx={{ mt: 1 }}>
-              <Grid item xs={12} md={6}>
-                <Box
-                  component="img"
-                  src="https://images.unsplash.com/photo-1581091215367-59ab6dcef3d8?auto=format&fit=crop&w=1200&q=80"
-                  alt="professional home service team"
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mt: 3.2 }}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  endIcon={<ArrowOutwardIcon />}
                   sx={{
-                    width: "100%",
-                    height: 290,
-                    objectFit: "cover",
-                    borderRadius: 3,
-                    border: "1px solid #d7dee8",
-                    boxShadow: "0 12px 24px rgba(15, 23, 42, 0.10)",
-                    transition: "transform 0.3s ease",
-                    "&:hover": { transform: "scale(1.02)" },
+                    borderRadius: 999,
+                    px: 3.5,
+                    py: 1.35,
+                    background: "linear-gradient(135deg, #0f172a, #2563eb)",
+                    boxShadow: "0 14px 28px rgba(37, 99, 235, 0.22)",
+                  }}
+                  onClick={() => navigate("/services")}
+                >
+                  Explore Services
+                </Button>
+                <Button
+                  variant="text"
+                  size="large"
+                  sx={{
+                    borderRadius: 999,
+                    px: 2,
+                    py: 1.35,
+                    color: "#0c4a6e",
+                    fontWeight: 700,
+                  }}
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </Button>
+              </Stack>
+            </Grid>
+
+            <Grid item xs={12} lg={5}>
+              <Box
+                sx={{
+                  position: "relative",
+                  minHeight: { xs: 320, md: 420 },
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  background:
+                    "linear-gradient(160deg, rgba(15,23,42,0.96), rgba(37,99,235,0.9) 58%, rgba(14,165,233,0.86) 100%)",
+                  boxShadow: "0 28px 60px rgba(37, 99, 235, 0.16)",
+                }}
+              >
+                <Box
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    background:
+                      "radial-gradient(circle at 22% 24%, rgba(255,255,255,0.18), transparent 18%), radial-gradient(circle at 82% 26%, rgba(255,255,255,0.12), transparent 18%), radial-gradient(circle at 65% 78%, rgba(255,255,255,0.12), transparent 18%)",
                   }}
                 />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Grid container spacing={2}>
-                  {trustPoints.map((point) => (
-                    <Grid item xs={12} key={point.title}>
-                      <Card
+                <Box sx={{ position: "relative", zIndex: 1, p: { xs: 3, md: 4 } }}>
+                  <Typography sx={{ color: "rgba(255,255,255,0.72)", fontSize: 12, letterSpacing: 1.1 }}>
+                    PLATFORM OVERVIEW
+                  </Typography>
+                  <Typography variant="h4" sx={{ mt: 1, color: "#fff", fontWeight: 800, maxWidth: 320 }}>
+                    One place for customer booking and admin operations.
+                  </Typography>
+
+                  <Stack spacing={1.8} sx={{ mt: 4 }}>
+                    {["Book services online", "Track service progress", "Manage bookings from admin dashboard"].map((item) => (
+                      <Box
+                        key={item}
                         sx={{
-                          borderRadius: 3,
-                          border: "1px solid #d7dee8",
-                          boxShadow: "0 8px 18px rgba(15, 23, 42, 0.08)",
-                          transition: "all 0.25s ease",
-                          "&:hover": {
-                            transform: "translateX(4px)",
-                            boxShadow: "0 12px 24px rgba(15, 23, 42, 0.12)",
+                          py: 1.2,
+                          borderBottom: "1px solid rgba(255,255,255,0.16)",
+                        }}
+                      >
+                        <Typography sx={{ color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>
+                          {item}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
+
+          <Box
+            className="reveal delay-2"
+            sx={{
+              borderRadius: 7,
+              overflow: "hidden",
+              background:
+                "linear-gradient(135deg, rgba(255,255,255,0.7), rgba(239,246,255,0.82) 48%, rgba(224,231,255,0.84) 100%)",
+              border: "1px solid rgba(148, 163, 184, 0.18)",
+              boxShadow: "0 24px 54px rgba(37, 99, 235, 0.08)",
+            }}
+          >
+            <Grid container>
+              <Grid item xs={12} lg={4}>
+                <Box
+                  sx={{
+                    height: "100%",
+                    p: { xs: 3, md: 4 },
+                    background:
+                      "linear-gradient(160deg, rgba(15,23,42,0.96), rgba(30,64,175,0.92) 58%, rgba(14,165,233,0.82) 100%)",
+                    color: "#fff",
+                  }}
+                >
+                  <Typography sx={{ fontSize: 12, letterSpacing: 1.1, opacity: 0.74 }}>
+                    WHY TEAMS CHOOSE IT
+                  </Typography>
+                  <Typography variant="h3" sx={{ mt: 1.2, fontSize: { xs: 30, md: 38 }, lineHeight: 1.05 }}>
+                    Why this platform works
+                  </Typography>
+                  <Typography sx={{ mt: 1.8, color: "rgba(255,255,255,0.8)", lineHeight: 1.8 }}>
+                    The product combines a smooth customer booking experience with operational
+                    clarity for admins, which makes the whole service workflow easier to run.
+                  </Typography>
+
+                  <Stack direction="row" spacing={1.2} sx={{ mt: 3, flexWrap: "wrap" }}>
+                    {["Customer ready", "Admin managed", "Service focused"].map((label) => (
+                      <Chip
+                        key={label}
+                        label={label}
+                        sx={{
+                          color: "#eff6ff",
+                          backgroundColor: "rgba(255,255,255,0.12)",
+                          border: "1px solid rgba(255,255,255,0.16)",
+                          fontWeight: 700,
+                        }}
+                      />
+                    ))}
+                  </Stack>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12} lg={8}>
+                <Grid container spacing={0}>
+                  {benefits.map((item, index) => (
+                    <Grid item xs={12} md={4} key={item.title}>
+                      <Box
+                        sx={{
+                          height: "100%",
+                          p: { xs: 3, md: 3.5 },
+                          borderLeft: {
+                            xs: "none",
+                            md: index === 0 ? "1px solid rgba(148, 163, 184, 0.14)" : "1px solid rgba(148, 163, 184, 0.14)",
+                          },
+                          borderTop: {
+                            xs: index === 0 ? "none" : "1px solid rgba(148, 163, 184, 0.14)",
+                            md: "none",
                           },
                         }}
                       >
-                        <CardContent sx={{ display: "flex", gap: 1.2, alignItems: "flex-start" }}>
-                          <Box sx={{ mt: 0.2 }}>{point.icon}</Box>
-                          <Box>
-                            <Typography sx={{ color: "#0f172a", fontWeight: 700 }}>
-                              {point.title}
-                            </Typography>
-                            <Typography sx={{ color: "#475569", mt: 0.6 }}>
-                              {point.desc}
-                            </Typography>
-                          </Box>
-                        </CardContent>
-                      </Card>
+                        <Box
+                          sx={{
+                            width: 52,
+                            height: 52,
+                            borderRadius: 3,
+                            display: "grid",
+                            placeItems: "center",
+                            background: "linear-gradient(135deg, rgba(37,99,235,0.12), rgba(14,165,233,0.12))",
+                            mb: 2,
+                          }}
+                        >
+                          {item.icon}
+                        </Box>
+                        <Typography sx={{ color: "#2563eb", fontWeight: 800, fontSize: 12, letterSpacing: 0.9, textTransform: "uppercase" }}>
+                          {item.stat}
+                        </Typography>
+                        <Typography sx={{ mt: 0.9, color: "#0f172a", fontWeight: 800, fontSize: 21 }}>
+                          {item.title}
+                        </Typography>
+                        <Typography sx={{ mt: 1.1, color: "#64748b", lineHeight: 1.8 }}>
+                          {item.description}
+                        </Typography>
+                      </Box>
                     </Grid>
                   ))}
                 </Grid>
               </Grid>
             </Grid>
-          </Container>
+          </Box>
 
-          {/* ================= FEATURES SECTION ================= */}
-          <Container maxWidth="lg" sx={{ mt: 10 }} className="reveal delay-3">
-            <Typography
-              variant="h4"
-              textAlign="center"
-              gutterBottom
-              sx={{ color: "#0f172a", fontWeight: 700 }}
-            >
-              Why Choose Our Platform?
-            </Typography>
+          <Stack spacing={2.5} className="reveal delay-3">
+            <Box>
+              <Typography variant="h3" sx={{ color: "#0f172a", fontSize: { xs: 28, md: 38 } }}>
+                Popular services
+              </Typography>
+              <Typography sx={{ mt: 1, color: "#64748b", maxWidth: 620, lineHeight: 1.8 }}>
+                Core service categories are presented in a simple, readable way so the page
+                feels lighter and easier to scan.
+              </Typography>
+            </Box>
 
-              <Grid container spacing={3} sx={{ mt: 3 }}>
-                {[
-                  {
-                    icon: <BuildIcon fontSize="large" color="primary" />,
-                    title: "Wide Range of Services",
-                    desc: "Plumbing, electrical, cleaning, and more at one place.",
-                  },
-                  {
-                    icon: <VerifiedUserIcon fontSize="large" color="primary" />,
-                    title: "Easy Booking",
-                    desc: "Simple booking flow with real-time status updates.",
-                  },
-                  {
-                    icon: <VerifiedUserIcon fontSize="large" color="primary" />,
-                    title: "Secure & Reliable",
-                    desc: "Authentication-based access with protected routes.",
-                  },
-                ].map((item, index) => (
-                  <Grid item xs={12} md={4} key={index}>
-                    <Card className="feature-card" sx={featureCardStyle}>
-                      <CardContent>
-                        <Box className="feature-icon">{item.icon}</Box>
-                        <Typography variant="h6" mt={2} sx={{ color: "#0f172a", fontWeight: 700 }}>
-                          {item.title}
-                        </Typography>
-                        <Typography sx={{ color: "#475569", mt: 1 }}>
-                          {item.desc}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-          </Container>
-
-          {/* ================= HOW IT WORKS ================= */}
-          <Container maxWidth="lg" sx={{ mt: 10, mb: 2 }} className="reveal delay-4">
-            <Typography
-              variant="h4"
-              textAlign="center"
-              gutterBottom
-              sx={{ color: "#0f172a", fontWeight: 700 }}
-            >
-              How It Works
-            </Typography>
-            <Typography
-              sx={{
-                textAlign: "center",
-                color: "#475569",
-                maxWidth: 700,
-                mx: "auto",
-                mb: 3.5,
-              }}
-            >
-              Get started in three simple steps with a booking flow designed for
-              speed, clarity, and reliability.
-            </Typography>
-
-            <Grid
-              container
-              spacing={3}
-              sx={{
-                mt: 1,
-                position: "relative",
-              }}
-            >
-              {flowSteps.map((item, index) => (
-                <Grid item xs={12} md={4} key={item.id}>
-                  <Card
+            <Stack spacing={2}>
+              {services.map((service) => (
+                <Box
+                  key={service.title}
+                  sx={{
+                    p: { xs: 2.2, md: 2.8 },
+                    borderRadius: 5,
+                    background: service.bg,
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", md: "170px 1fr auto" },
+                    gap: 2,
+                    alignItems: "center",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, color: service.accent }}>
+                    {service.icon}
+                    <Typography sx={{ color: "#0f172a", fontWeight: 800, fontSize: 24 }}>
+                      {service.title}
+                    </Typography>
+                  </Box>
+                  <Typography sx={{ color: "#475569", lineHeight: 1.8 }}>
+                    {service.description}
+                  </Typography>
+                  <Button
+                    onClick={() => navigate("/services")}
                     sx={{
-                      borderRadius: 3,
-                      border: "1px solid #d7dee8",
-                      boxShadow: "0 10px 22px rgba(15, 23, 42, 0.08)",
-                      height: "100%",
-                      transition: "all 0.25s ease",
-                      position: "relative",
-                      overflow: "hidden",
-                      "&:hover": {
-                        transform: "translateY(-5px)",
-                        boxShadow: "0 16px 30px rgba(15, 23, 42, 0.14)",
-                      },
+                      justifySelf: { xs: "flex-start", md: "flex-end" },
+                      color: service.accent,
+                      fontWeight: 700,
+                      px: 0,
                     }}
                   >
-                    <CardContent sx={{ p: 3.2 }}>
-                      <Box
-                        sx={{
-                          width: 52,
-                          height: 52,
-                          borderRadius: "50%",
-                          display: "grid",
-                          placeItems: "center",
-                          color: "#fff",
-                          mb: 1.6,
-                          background: "linear-gradient(135deg, #0f172a, #1d4ed8)",
-                          boxShadow: "0 8px 18px rgba(29, 78, 216, 0.30)",
-                        }}
-                      >
-                        {item.icon}
-                      </Box>
-                      <Typography sx={{ color: "#1e3a8a", fontWeight: 700, fontSize: 13 }}>
-                        STEP {item.id}
-                      </Typography>
-                      <Typography variant="h6" sx={{ color: "#0f172a", fontWeight: 700, mt: 0.4 }}>
-                        {item.title}
-                      </Typography>
-                      <Typography sx={{ color: "#475569", mt: 1.1, lineHeight: 1.7 }}>
-                        {item.desc}
-                      </Typography>
-                      {index < flowSteps.length - 1 && (
-                        <Box
-                          sx={{
-                            display: { xs: "none", md: "block" },
-                            position: "absolute",
-                            top: "48%",
-                            right: -22,
-                            width: 44,
-                            height: 2,
-                            background:
-                              "linear-gradient(90deg, #93c5fd 0%, rgba(147,197,253,0.1) 100%)",
-                          }}
-                        />
-                      )}
-                    </CardContent>
-                  </Card>
-                </Grid>
+                    View service
+                  </Button>
+                </Box>
               ))}
+            </Stack>
+          </Stack>
+
+          <Grid container spacing={{ xs: 3, md: 4 }} alignItems="start" className="reveal delay-4">
+            <Grid item xs={12} md={4}>
+              <Typography variant="h3" sx={{ color: "#0f172a", fontSize: { xs: 28, md: 38 } }}>
+                How it works
+              </Typography>
+              <Typography sx={{ mt: 1, color: "#64748b", lineHeight: 1.8 }}>
+                A short, clear flow for users with enough structure for admin management.
+              </Typography>
             </Grid>
-          </Container>
-        </Box>
+            <Grid item xs={12} md={8}>
+              <Stack spacing={2.4}>
+                {steps.map((step) => (
+                  <Box
+                    key={step.id}
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "76px 1fr" },
+                      gap: 2,
+                      alignItems: "start",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 58,
+                        height: 58,
+                        borderRadius: "50%",
+                        display: "grid",
+                        placeItems: "center",
+                        color: "#fff",
+                        background: "linear-gradient(135deg, #4338ca, #2563eb)",
+                        boxShadow: "0 10px 22px rgba(79,70,229,0.2)",
+                      }}
+                    >
+                      {step.icon}
+                    </Box>
+                    <Box sx={{ pt: 0.5 }}>
+                      <Typography sx={{ color: "#4338ca", fontWeight: 800, fontSize: 13 }}>
+                        STEP {step.id}
+                      </Typography>
+                      <Typography sx={{ mt: 0.5, color: "#0f172a", fontWeight: 800, fontSize: 22 }}>
+                        {step.title}
+                      </Typography>
+                      <Typography sx={{ mt: 0.8, color: "#64748b", lineHeight: 1.8 }}>
+                        {step.description}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Stack>
+            </Grid>
+          </Grid>
+        </Stack>
       </AnimatedPage>
     </PageWrapper>
   );

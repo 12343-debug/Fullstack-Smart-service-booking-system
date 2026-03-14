@@ -24,6 +24,7 @@ import DirectionsButton from "../../components/DirectionsButton";
 import { cancelBooking, updateBookingStatus } from "../../services/bookingsApi";
 import AdminNavbar from "./AdminNavBar";
 import { buildMapsUrl, formatCoordinates } from "../../utils/location";
+import PageHero from "../../components/PageHero";
 
 const CALENDAR_SLOTS = [
   "10:00 AM",
@@ -184,32 +185,30 @@ const AdminDashboard = () => {
       }}
     >
     <PageWrapper
+      theme="aurora"
       sx={{
         pt: 6,
-        "& .MuiContainer-root": {
-          maxWidth: "100% !important",
-          px: { xs: 2, md: 4 },
-        },
       }}
+      maxWidth="xl"
+      containerSx={{ px: { xs: 2, md: 4 } }}
     >
         <BackButton />
       <AdminNavbar sx={{ mt: 7, marginTop: "10px" }} />
       
       <AnimatedPage>
-        <Typography
-          variant="h4"
-          sx={{
-            textAlign: "center",
-            mt: 3,
-            mb: 3,
-            color: "#0f172a",
-            fontWeight: 700,
-            letterSpacing: 0.2,
-          }}
-          gutterBottom
-        >
-          Admin Dashboard
-        </Typography>
+        <PageHero
+          eyebrow="Admin Operations"
+          title="See schedule pressure and booking status at a glance"
+          description="This dashboard groups live bookings, calendar coverage, and service progress into one operational view for daily coordination."
+          tone="aurora"
+          stats={[
+            { label: "Total Bookings", value: totalBookings },
+            { label: "Pending", value: pendingBookings },
+            { label: "In Progress", value: inProgressBookings },
+            { label: "Completed", value: completedBookings },
+          ]}
+          sx={{ mt: 3 }}
+        />
         {error ? (
           <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
             {error}
@@ -225,9 +224,9 @@ const AdminDashboard = () => {
         >
           <Card
             sx={{
-              backgroundColor: "#ffffff",
-              border: "1px solid #d7dee8",
-              boxShadow: "0 8px 18px rgba(15, 23, 42, 0.08)",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.78), rgba(220,252,231,0.84))",
+              border: "1px solid rgba(16, 185, 129, 0.14)",
+              boxShadow: "none",
             }}
           >
             <CardContent>
@@ -242,9 +241,9 @@ const AdminDashboard = () => {
 
           <Card
             sx={{
-              backgroundColor: "#ffffff",
-              border: "1px solid #d7dee8",
-              boxShadow: "0 8px 18px rgba(15, 23, 42, 0.08)",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.78), rgba(220,252,231,0.84))",
+              border: "1px solid rgba(16, 185, 129, 0.14)",
+              boxShadow: "none",
             }}
           >
             <CardContent>
@@ -257,9 +256,9 @@ const AdminDashboard = () => {
 
           <Card
             sx={{
-              backgroundColor: "#ffffff",
-              border: "1px solid #d7dee8",
-              boxShadow: "0 8px 18px rgba(15, 23, 42, 0.08)",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.78), rgba(220,252,231,0.84))",
+              border: "1px solid rgba(16, 185, 129, 0.14)",
+              boxShadow: "none",
             }}
           >
             <CardContent>
@@ -272,9 +271,9 @@ const AdminDashboard = () => {
 
           <Card
             sx={{
-              backgroundColor: "#ffffff",
-              border: "1px solid #d7dee8",
-              boxShadow: "0 8px 18px rgba(15, 23, 42, 0.08)",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.78), rgba(220,252,231,0.84))",
+              border: "1px solid rgba(16, 185, 129, 0.14)",
+              boxShadow: "none",
             }}
           >
             <CardContent>
@@ -292,10 +291,11 @@ const AdminDashboard = () => {
           sx={{
             mb: 3,
             p: { xs: 2, md: 3 },
-            borderRadius: 3,
-            border: "1px solid #d7dee8",
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-            boxShadow: "0 12px 35px rgba(15, 23, 42, 0.08)",
+            borderRadius: 4,
+            border: "1px solid rgba(16, 185, 129, 0.16)",
+            background:
+              "linear-gradient(145deg, rgba(255,255,255,0.72), rgba(220,252,231,0.8))",
+            boxShadow: "var(--shadow-soft)",
           }}
         >
           <Box
@@ -357,7 +357,7 @@ const AdminDashboard = () => {
               mb: 2.5,
             }}
           >
-            <Card sx={{ borderRadius: 3, border: "1px solid #d7dee8", boxShadow: "none" }}>
+            <Card sx={{ borderRadius: 3.5, border: "1px solid rgba(16, 185, 129, 0.14)", boxShadow: "none", background: "linear-gradient(180deg, rgba(255,255,255,0.78), rgba(220,252,231,0.84))" }}>
               <CardContent>
                 <Typography sx={{ color: "#64748b", fontSize: 14 }}>Scheduled Today</Typography>
                 <Typography variant="h4" sx={{ color: "#0f172a", fontWeight: 800 }}>
@@ -365,7 +365,7 @@ const AdminDashboard = () => {
                 </Typography>
               </CardContent>
             </Card>
-            <Card sx={{ borderRadius: 3, border: "1px solid #d7dee8", boxShadow: "none" }}>
+            <Card sx={{ borderRadius: 3.5, border: "1px solid rgba(16, 185, 129, 0.14)", boxShadow: "none", background: "linear-gradient(180deg, rgba(255,255,255,0.78), rgba(220,252,231,0.84))" }}>
               <CardContent>
                 <Typography sx={{ color: "#64748b", fontSize: 14 }}>
                   {calendarView === "day" ? "Selected Day" : "Selected Week"}
@@ -489,14 +489,15 @@ const AdminDashboard = () => {
               <Card
                 sx={{
                   height: "100%",
-                  borderRadius: 3,
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #d7dee8",
-                  boxShadow: "0 10px 22px rgba(15, 23, 42, 0.10)",
+                  borderRadius: 4,
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.84), rgba(236,253,245,0.92))",
+                  border: "1px solid rgba(16, 185, 129, 0.16)",
+                  boxShadow: "var(--shadow-card)",
                   transition: "0.25s ease",
                   "&:hover": {
-                    transform: "translateY(-3px)",
-                    boxShadow: "0 14px 28px rgba(15, 23, 42, 0.14)",
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 22px 40px rgba(52, 40, 25, 0.14)",
                   },
                 }}
               >

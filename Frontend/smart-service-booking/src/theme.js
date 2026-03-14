@@ -3,24 +3,45 @@ import { createTheme } from "@mui/material";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#1976d2",
+      main: "#14532d",
     },
     secondary: {
-      main: "#00bfa6",
+      main: "#0f766e",
+    },
+    text: {
+      primary: "#10261f",
+      secondary: "#4c635a",
     },
     background: {
-      default: "f5f7fa",
+      default: "#f4efe6",
+      paper: "#fffdf8",
     },
   },
   typography: {
-    fontFamily: "Inter,Roboto,san-serif",
+    fontFamily: '"Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+    h1: {
+      fontWeight: 800,
+      letterSpacing: -1.4,
+    },
+    h2: {
+      fontWeight: 800,
+      letterSpacing: -1.2,
+    },
+    h3: {
+      fontWeight: 800,
+      letterSpacing: -1,
+    },
     h4: {
-      fontWeight: 700,
+      fontWeight: 800,
+      letterSpacing: -0.6,
     },
     button: {
       textTransform: "none",
-      fontWeight: 600,
+      fontWeight: 700,
     },
+  },
+  shape: {
+    borderRadius: 18,
   },
 });
 

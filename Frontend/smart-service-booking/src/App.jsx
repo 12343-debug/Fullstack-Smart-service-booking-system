@@ -26,10 +26,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Navigate to={defaultRoute} replace />} />
-        <Route
-          path="/home"
-          element={token ? <Navigate to="/bookings" replace /> : <Home />}
-        />
+        <Route path="/home" element={<Home />} />
 
         <Route
           path="/login"

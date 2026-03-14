@@ -9,8 +9,7 @@ import {
   MenuItem,
   Chip,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
@@ -19,6 +18,7 @@ import toast from "react-hot-toast";
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const token = localStorage.getItem("token");
   const role = (localStorage.getItem("role") || "").trim().toLowerCase();
 
@@ -57,22 +57,34 @@ const NavBar = () => {
 
   const navButtonSx = {
     textTransform: "none",
-    fontWeight: 600,
+    fontWeight: 700,
     fontStyle: "normal",
     letterSpacing: 0.2,
-    fontFamily: "'Poppins', 'Segoe UI', sans-serif",
     fontSize: { xs: 14, md: 15 },
-    color: "#0f172a",
+    color: "#173d32",
     px: 1.6,
-    borderRadius: 2,
+    borderRadius: 999,
     minWidth: "auto",
     transition: "all 0.2s ease",
-    "&:hover": {
-      color: "#ffffff",
-      background: "linear-gradient(135deg, #0f172a, #1e3a8a)",
-      boxShadow: "0 8px 18px rgba(15, 23, 42, 0.25)",
-    },
+    border: "1px solid transparent",
   };
+
+  const getButtonSx = (path) => ({
+    ...navButtonSx,
+    ...(location.pathname === path
+      ? {
+          color: "#fffaf2",
+          background: "linear-gradient(135deg, #173d32, #0f766e)",
+          boxShadow: "0 12px 24px rgba(20, 83, 45, 0.22)",
+        }
+      : {
+          "&:hover": {
+            color: "#fffaf2",
+            background: "linear-gradient(135deg, #173d32, #0f766e)",
+            boxShadow: "0 12px 24px rgba(20, 83, 45, 0.18)",
+          },
+        }),
+  });
 
   return (
     <AppBar
@@ -83,13 +95,12 @@ const NavBar = () => {
         left: { xs: 10, md: 24 },
         right: { xs: 10, md: 24 },
         width: "auto",
-        fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-        background: "rgba(248, 250, 252, 0.92)",
-        border: "1px solid #d7dee8",
-        color: "#0f172a",
-        borderRadius: 3,
-        backdropFilter: "blur(10px)",
-        boxShadow: "0 12px 24px rgba(15, 23, 42, 0.10)",
+        background: "rgba(255, 252, 246, 0.82)",
+        border: "1px solid rgba(124, 104, 72, 0.16)",
+        color: "#173d32",
+        borderRadius: 4,
+        backdropFilter: "blur(14px)",
+        boxShadow: "var(--shadow-card)",
         zIndex: 1300,
       }}
     >
@@ -116,12 +127,12 @@ const NavBar = () => {
             sx={{
               width: 38,
               height: 38,
-              borderRadius: 2.2,
+              borderRadius: 3,
               display: "grid",
               placeItems: "center",
-              background: "linear-gradient(145deg, #0f172a, #1d4ed8)",
+              background: "linear-gradient(145deg, #173d32, #0f766e)",
               color: "#fff",
-              boxShadow: "0 6px 14px rgba(29, 78, 216, 0.35)",
+              boxShadow: "0 10px 22px rgba(20, 83, 45, 0.28)",
             }}
           >
             <MiscellaneousServicesIcon sx={{ fontSize: 22 }} />
@@ -132,7 +143,6 @@ const NavBar = () => {
                 fontWeight: 800,
                 fontSize: { xs: 14, md: 16 },
                 lineHeight: 1.1,
-                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
                 letterSpacing: 0.2,
               }}
             >
@@ -144,11 +154,10 @@ const NavBar = () => {
                 fontSize: 11,
                 lineHeight: 1.1,
                 fontWeight: 500,
-                fontStyle: "italic",
-                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                letterSpacing: 0.2,
               }}
             >
-              Fast, Reliable, Professional
+              Book cleanly. Track clearly.
             </Typography>
           </Box>
         </Box>
@@ -156,7 +165,7 @@ const NavBar = () => {
           <Box sx={{ display: "flex", gap: { xs: 0.5, md: 1 }, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
             <Button
               color="inherit"
-              sx={navButtonSx}
+              sx={getButtonSx("/home")}
               component={Link}
               to="/home"
             >
@@ -173,11 +182,11 @@ const NavBar = () => {
               color="inherit"
               component={Link}
               to="/register"
-              sx={navButtonSx}
+              sx={getButtonSx("/register")}
             >
               Register
             </Button>
-            <Button component={Link} to="/login" sx={navButtonSx}>
+            <Button component={Link} to="/login" sx={getButtonSx("/login")}>
               Login
             </Button>
           </Box>
@@ -195,7 +204,7 @@ const NavBar = () => {
             
             <Button
               color="inherit"
-              sx={navButtonSx}
+              sx={getButtonSx("/services")}
               component={Link}
               to="/services"
             >
@@ -206,7 +215,7 @@ const NavBar = () => {
               color="inherit"
               component={Link}
               to="/bookings"
-              sx={navButtonSx}
+              sx={getButtonSx("/bookings")}
             >
               Bookings
             </Button>
@@ -215,9 +224,8 @@ const NavBar = () => {
               size="small"
               sx={{
                 backgroundColor: "#e2e8f0",
-                color: "#0f172a",
-                fontWeight: 600,
-                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                color: "#173d32",
+                fontWeight: 700,
                 letterSpacing: 0.2,
                 display: { xs: "none", sm: "inline-flex" },
               }}
@@ -226,8 +234,8 @@ const NavBar = () => {
               onClick={handleProfileClick}
               sx={{
                 border: "1px solid #cbd5e1",
-                backgroundColor: "#fff",
-                "&:hover": { backgroundColor: "#f1f5f9" },
+                backgroundColor: "rgba(255,255,255,0.72)",
+                "&:hover": { backgroundColor: "#fffaf2" },
               }}
             >
               <AccountCircleIcon fontSize="medium" />
@@ -241,7 +249,7 @@ const NavBar = () => {
               transformOrigin={{ vertical: "top", horizontal: "right" }}
             >
               <MenuItem
-                sx={{ fontFamily: "'Poppins', 'Segoe UI', sans-serif", fontWeight: 500 }}
+                sx={{ fontWeight: 600 }}
                 onClick={() => {
                   navigate("/bookings");
                   handleClose();
@@ -254,7 +262,6 @@ const NavBar = () => {
                 onClick={handleLogout}
                 sx={{
                   color: "#dc2626",
-                  fontFamily: "'Poppins', 'Segoe UI', sans-serif",
                   fontWeight: 600,
                 }}
               >

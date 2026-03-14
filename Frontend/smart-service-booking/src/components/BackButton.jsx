@@ -14,11 +14,12 @@ const BackButton = ({ sx = {} }) => {
         left: 0,
         zIndex: 1200,
         display: "inline-flex",
-        backgroundColor: "rgba(255,255,255,0.9)",
+        backgroundColor: "rgba(255, 252, 246, 0.88)",
         mb: 1.5,
-        boxShadow: "0 8px 18px rgba(15, 23, 42, 0.10)",
-        border: "1px solid #d7dee8",
-        "&:hover": { backgroundColor: "#ffffff" },
+        boxShadow: "var(--shadow-card)",
+        border: "1px solid rgba(124, 104, 72, 0.16)",
+        color: "#173d32",
+        "&:hover": { backgroundColor: "#fffaf2" },
         ...sx,
       }}
     >

@@ -4,3 +4,31 @@ html, body, #root {
   width: 100%;
   overflow-x: hidden;
 }
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(18px);
+}
+
+body::before {
+  width: 18rem;
+  height: 18rem;
+  top: 8rem;
+  left: -4rem;
+  border-radius: 50%;
+  background: rgba(197, 138, 42, 0.14);
+}
+
+body::after {
+  width: 20rem;
+  height: 20rem;
+  right: -6rem;
+  bottom: 6rem;
+  border-radius: 38% 62% 55% 45%;
+  background: rgba(15, 118, 110, 0.12);
+}

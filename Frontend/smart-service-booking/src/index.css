@@ -1,11 +1,26 @@
 :root {
-  font-family: system-ui, Helvetica, Arial, sans-serif;
+  font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #10261f;
+  background:
+    radial-gradient(circle at top left, rgba(20, 83, 45, 0.16), transparent 24%),
+    radial-gradient(circle at 85% 12%, rgba(15, 118, 110, 0.12), transparent 18%),
+    linear-gradient(180deg, #f8f4ec 0%, #f2ede3 100%);
+  --page-bg:
+    radial-gradient(circle at top left, rgba(20, 83, 45, 0.14), transparent 26%),
+    radial-gradient(circle at 82% 18%, rgba(15, 118, 110, 0.12), transparent 18%),
+    linear-gradient(180deg, #f8f4ec 0%, #f2ede3 100%);
+  --panel-bg: rgba(255, 252, 246, 0.84);
+  --panel-border: rgba(124, 104, 72, 0.16);
+  --shadow-soft: 0 22px 55px rgba(71, 55, 35, 0.12);
+  --shadow-card: 0 16px 36px rgba(52, 40, 25, 0.1);
+  --brand-deep: #173d32;
+  --brand-green: #14532d;
+  --brand-mint: #0f766e;
+  --brand-gold: #c58a2a;
+  --ink: #10261f;
+  --muted: #5d7168;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,58 +30,36 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: inherit;
   text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
+  min-height: 100vh;
+  background: var(--page-bg);
+}
+
+#root {
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
 button {
-  border-radius: 8px;
+  border-radius: 14px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  font-weight: 500;
+  font-weight: 700;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #173d32;
   cursor: pointer;
   transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
 
 .auth-box{
   width:300px;
@@ -93,4 +86,3 @@ button:focus-visible {
   border-radius:5px;
   cursor:pointer;
 }
-

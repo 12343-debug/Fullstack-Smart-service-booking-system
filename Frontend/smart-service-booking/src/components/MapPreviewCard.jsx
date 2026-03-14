@@ -12,10 +12,10 @@ const MapPreviewCard = ({ location, title = "Map preview", height = 180, sx = {}
     <Box
       sx={{
         mt: 1.5,
-        borderRadius: 2,
+        borderRadius: 3,
         overflow: "hidden",
-        border: "1px solid #d7dee8",
-        backgroundColor: "#f8fafc",
+        border: "1px solid rgba(124, 104, 72, 0.16)",
+        backgroundColor: "#faf6ef",
         ...sx,
       }}
     >
@@ -25,9 +25,9 @@ const MapPreviewCard = ({ location, title = "Map preview", height = 180, sx = {}
           py: 1,
           fontSize: 13,
           fontWeight: 700,
-          color: "#0f172a",
+          color: "#173d32",
           borderBottom: "1px solid #d7dee8",
-          backgroundColor: "#ffffff",
+          backgroundColor: "rgba(255,255,255,0.72)",
         }}
       >
         {title}
@@ -43,7 +43,7 @@ const MapPreviewCard = ({ location, title = "Map preview", height = 180, sx = {}
           width: "100%",
           height,
           border: 0,
-          backgroundColor: "#e2e8f0",
+          backgroundColor: "#ede6da",
         }}
       />
     </Box>

@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: ./Backend
+    container_name: smart-service-backend
+    env_file:
+      - ./Backend/.env
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./Frontend/smart-service-booking
+      args:
+        VITE_API_BASE_URL: http://localhost:5000
+    container_name: smart-service-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    restart: unless-stopped
